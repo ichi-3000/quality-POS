@@ -176,22 +176,22 @@ export function StockTransfersPage({ user }: { user: User }) {
         <AlertBanner type={banner.type} message={banner.text} onClose={() => setBanner(null)} />
       )}
 
-      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5 flex-1">
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
+      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5 flex-1">
+          <div className="relative lg:flex-1 lg:min-w-[200px] lg:max-w-xs">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search transfer # or branch..."
-              className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded"
+              className="w-full pl-9 pr-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
           >
             <option value="">All Statuses</option>
             <option value="draft">Draft</option>
@@ -208,7 +208,7 @@ export function StockTransfersPage({ user }: { user: User }) {
           <button
             type="button"
             onClick={openNewTransfer}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
+            className="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>New Inter-Branch Transfer</span>
@@ -225,7 +225,44 @@ export function StockTransfersPage({ user }: { user: User }) {
         />
       ) : (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Transfer Cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {transfers.map((t) => (
+              <div key={`m-trf-${t.id}`} className="p-4 space-y-2.5 text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="font-mono-num font-semibold text-[#1A3A5C] text-sm">
+                      {t.transfer_number}
+                    </div>
+                    <div className="text-[11px] text-slate-500">
+                      {formatDateTime(t.created_at)}
+                    </div>
+                  </div>
+                  <StatusTag status={t.status} />
+                </div>
+                <div className="p-2.5 bg-[#F5F7FA] border border-slate-200 rounded font-medium text-slate-900">
+                  {t.source_branch_name}
+                  <ArrowRight className="w-3.5 h-3.5 inline mx-1.5 text-[#E67E22]" />
+                  {t.destination_branch_name}
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-600">
+                  <span>Requested by {t.requested_by_name}</span>
+                  <span className="font-mono-num font-semibold">{t.item_count} items</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openDetail(t.id)}
+                  className="w-full min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50 text-[#1A3A5C]"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>Open Transfer</span>
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Transfer Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#1A3A5C] text-white">
@@ -293,7 +330,7 @@ export function StockTransfersPage({ user }: { user: User }) {
                 required
                 value={form.source_branch_id}
                 onChange={(e) => setForm({ ...form, source_branch_id: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               >
                 {branches.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -310,7 +347,7 @@ export function StockTransfersPage({ user }: { user: User }) {
                 required
                 value={form.destination_branch_id}
                 onChange={(e) => setForm({ ...form, destination_branch_id: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               >
                 {branches.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -329,15 +366,21 @@ export function StockTransfersPage({ user }: { user: User }) {
                 onClick={() =>
                   setLines((prev) => [...prev, { product_id: '', quantity_requested: 1 }])
                 }
-                className="text-xs font-semibold text-[#E67E22] hover:underline"
+                className="text-xs font-semibold text-[#E67E22] hover:underline min-h-[36px] px-2"
               >
                 + Add Line
               </button>
             </div>
-            <div className="p-3 space-y-2">
+            <div className="p-3 space-y-3 sm:space-y-2">
               {lines.map((line, idx) => (
-                <div key={idx} className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-8">
+                <div
+                  key={idx}
+                  className="grid grid-cols-12 gap-2 items-center bg-[#F5F7FA] sm:bg-transparent p-2.5 sm:p-0 rounded sm:rounded-none border sm:border-0 border-slate-200"
+                >
+                  <div className="col-span-12 sm:col-span-8">
+                    <label className="sm:hidden block text-[11px] font-medium text-slate-600 mb-1">
+                      Product
+                    </label>
                     <select
                       required
                       value={line.product_id}
@@ -348,7 +391,7 @@ export function StockTransfersPage({ user }: { user: User }) {
                           )
                         )
                       }
-                      className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded bg-white"
+                      className="w-full px-2.5 py-2 sm:py-1.5 min-h-[44px] sm:min-h-[34px] text-xs border border-slate-300 rounded bg-white"
                     >
                       <option value="">Select product...</option>
                       {products.map((p) => (
@@ -358,7 +401,10 @@ export function StockTransfersPage({ user }: { user: User }) {
                       ))}
                     </select>
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-9 sm:col-span-3">
+                    <label className="sm:hidden block text-[11px] font-medium text-slate-600 mb-1">
+                      Qty Requested
+                    </label>
                     <input
                       type="number"
                       min={1}
@@ -371,17 +417,18 @@ export function StockTransfersPage({ user }: { user: User }) {
                           )
                         )
                       }
-                      className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded font-mono-num text-right"
+                      className="w-full px-2.5 py-2 sm:py-1.5 min-h-[44px] sm:min-h-[34px] text-xs border border-slate-300 rounded font-mono-num text-right bg-white"
                     />
                   </div>
-                  <div className="col-span-1 text-right">
+                  <div className="col-span-3 sm:col-span-1 text-right">
                     {lines.length > 1 && (
                       <button
                         type="button"
                         onClick={() => setLines((prev) => prev.filter((_, i) => i !== idx))}
-                        className="p-1 text-slate-400 hover:text-red-700"
+                        className="min-w-[40px] min-h-[40px] sm:min-w-0 sm:min-h-0 inline-flex items-center justify-center p-1.5 text-slate-500 hover:text-red-700"
+                        aria-label="Remove line"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                       </button>
                     )}
                   </div>
@@ -400,26 +447,27 @@ export function StockTransfersPage({ user }: { user: User }) {
             />
           </div>
 
-          <label className="inline-flex items-center gap-2 text-xs text-slate-700">
+          <label className="inline-flex items-center gap-2 text-xs text-slate-700 min-h-[36px]">
             <input
               type="checkbox"
               checked={form.submit_immediately}
               onChange={(e) => setForm({ ...form, submit_immediately: e.target.checked })}
+              className="w-4 h-4"
             />
             <span>Submit immediately for Approval (uncheck to save as Draft)</span>
           </label>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setCreateOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-slate-300 rounded text-slate-700"
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium border border-slate-300 rounded text-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
             >
               Create Transfer
             </button>
@@ -454,55 +502,113 @@ export function StockTransfersPage({ user }: { user: User }) {
               </div>
             </div>
 
-            <table className="w-full text-left border border-slate-200">
-              <thead>
-                <tr className="bg-[#1A3A5C] text-white">
-                  <th className="py-2 px-3">SKU</th>
-                  <th className="py-2 px-3">Product</th>
-                  <th className="py-2 px-3 text-right">Requested</th>
-                  <th className="py-2 px-3 text-right">Dispatched</th>
-                  <th className="py-2 px-3 text-right">Received</th>
-                  <th className="py-2 px-3 text-right">Discrepancy</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {(selected.items || []).map((it) => {
-                  const canConfirmReceipt =
-                    ['in_transit', 'dispatched'].includes(selected.status) &&
-                    (isGlobal || user.branch_id === selected.destination_branch_id);
-                  return (
-                    <tr key={it.id}>
-                      <td className="py-2 px-3 font-mono-num">{it.sku}</td>
-                      <td className="py-2 px-3 font-medium">{it.product_name}</td>
-                      <td className="py-2 px-3 text-right font-mono-num">{it.quantity_requested}</td>
-                      <td className="py-2 px-3 text-right font-mono-num">{it.quantity_dispatched}</td>
-                      <td className="py-2 px-3 text-right font-mono-num">
-                        {canConfirmReceipt ? (
-                          <input
-                            type="number"
-                            min={0}
-                            max={it.quantity_dispatched}
-                            value={receiveQuantities[it.product_id] ?? it.quantity_dispatched}
-                            onChange={(e) =>
-                              setReceiveQuantities((prev) => ({
-                                ...prev,
-                                [it.product_id]: Number(e.target.value),
-                              }))
-                            }
-                            className="w-20 px-2 py-1 text-xs border border-slate-300 rounded text-right font-mono-num"
-                          />
-                        ) : (
-                          it.quantity_received
-                        )}
-                      </td>
-                      <td className="py-2 px-3 text-right font-mono-num text-red-700 font-semibold">
-                        {it.discrepancy_quantity > 0 ? `-${it.discrepancy_quantity}` : '0'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            {/* Mobile Transfer Line Items & Receipt Input */}
+            <div className="sm:hidden space-y-2.5">
+              {(selected.items || []).map((it) => {
+                const canConfirmReceipt =
+                  ['in_transit', 'dispatched'].includes(selected.status) &&
+                  (isGlobal || user.branch_id === selected.destination_branch_id);
+                return (
+                  <div key={`m-it-${it.id}`} className="p-3 border border-slate-200 rounded space-y-2">
+                    <div>
+                      <div className="font-mono-num text-[11px] text-[#1A3A5C] font-semibold">
+                        {it.sku}
+                      </div>
+                      <div className="font-medium text-slate-900">{it.product_name}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center bg-[#F5F7FA] p-2 rounded">
+                      <div>
+                        <div className="text-[10px] text-slate-500">Requested</div>
+                        <div className="font-mono-num font-semibold">{it.quantity_requested}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-slate-500">Dispatched</div>
+                        <div className="font-mono-num font-semibold">{it.quantity_dispatched}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-slate-500">Discrepancy</div>
+                        <div className="font-mono-num font-semibold text-red-700">
+                          {it.discrepancy_quantity > 0 ? `-${it.discrepancy_quantity}` : '0'}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-slate-600 font-medium">Qty Received:</span>
+                      {canConfirmReceipt ? (
+                        <input
+                          type="number"
+                          min={0}
+                          max={it.quantity_dispatched}
+                          value={receiveQuantities[it.product_id] ?? it.quantity_dispatched}
+                          onChange={(e) =>
+                            setReceiveQuantities((prev) => ({
+                              ...prev,
+                              [it.product_id]: Number(e.target.value),
+                            }))
+                          }
+                          className="w-28 px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded text-right font-mono-num"
+                        />
+                      ) : (
+                        <span className="font-mono-num font-bold">{it.quantity_received}</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Transfer Line Items Table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-left border border-slate-200">
+                <thead>
+                  <tr className="bg-[#1A3A5C] text-white">
+                    <th className="py-2 px-3">SKU</th>
+                    <th className="py-2 px-3">Product</th>
+                    <th className="py-2 px-3 text-right">Requested</th>
+                    <th className="py-2 px-3 text-right">Dispatched</th>
+                    <th className="py-2 px-3 text-right">Received</th>
+                    <th className="py-2 px-3 text-right">Discrepancy</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {(selected.items || []).map((it) => {
+                    const canConfirmReceipt =
+                      ['in_transit', 'dispatched'].includes(selected.status) &&
+                      (isGlobal || user.branch_id === selected.destination_branch_id);
+                    return (
+                      <tr key={it.id}>
+                        <td className="py-2 px-3 font-mono-num whitespace-nowrap">{it.sku}</td>
+                        <td className="py-2 px-3 font-medium">{it.product_name}</td>
+                        <td className="py-2 px-3 text-right font-mono-num">{it.quantity_requested}</td>
+                        <td className="py-2 px-3 text-right font-mono-num">{it.quantity_dispatched}</td>
+                        <td className="py-2 px-3 text-right font-mono-num">
+                          {canConfirmReceipt ? (
+                            <input
+                              type="number"
+                              min={0}
+                              max={it.quantity_dispatched}
+                              value={receiveQuantities[it.product_id] ?? it.quantity_dispatched}
+                              onChange={(e) =>
+                                setReceiveQuantities((prev) => ({
+                                  ...prev,
+                                  [it.product_id]: Number(e.target.value),
+                                }))
+                              }
+                              className="w-20 px-2 py-1 text-xs border border-slate-300 rounded text-right font-mono-num"
+                            />
+                          ) : (
+                            it.quantity_received
+                          )}
+                        </td>
+                        <td className="py-2 px-3 text-right font-mono-num text-red-700 font-semibold">
+                          {it.discrepancy_quantity > 0 ? `-${it.discrepancy_quantity}` : '0'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
             {selected.notes && (
               <div className="p-3 bg-[#F5F7FA] border border-slate-200 rounded text-slate-700">
@@ -530,26 +636,26 @@ export function StockTransfersPage({ user }: { user: User }) {
                     value={discrepancyNotes}
                     onChange={(e) => setDiscrepancyNotes(e.target.value)}
                     placeholder="Enter reason for any short-delivery or damaged units..."
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded"
+                    className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded"
                   />
                 </div>
               )}
 
             {/* Workflow Action Buttons */}
-            <div className="flex flex-wrap justify-end gap-2 pt-3 border-t border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-2 pt-3 border-t border-slate-200">
               {selected.status === 'draft' && canCreate && (
                 <>
                   <button
                     type="button"
                     onClick={() => runTransition('cancel')}
-                    className="px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+                    className="w-full sm:w-auto px-3 py-2.5 min-h-[44px] text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
                   >
                     Cancel Transfer
                   </button>
                   <button
                     type="button"
                     onClick={() => runTransition('submit')}
-                    className="px-4 py-2 text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
+                    className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
                   >
                     Submit for Approval
                   </button>
@@ -563,14 +669,14 @@ export function StockTransfersPage({ user }: { user: User }) {
                     <button
                       type="button"
                       onClick={() => runTransition('reject')}
-                      className="px-3 py-2 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700"
+                      className="w-full sm:w-auto px-3 py-2.5 min-h-[44px] text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700"
                     >
                       Reject
                     </button>
                     <button
                       type="button"
                       onClick={() => runTransition('approve')}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47]"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47]"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>Approve Transfer</span>
@@ -583,7 +689,7 @@ export function StockTransfersPage({ user }: { user: User }) {
                   <button
                     type="button"
                     onClick={() => runTransition('dispatch')}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
                   >
                     <Truck className="w-3.5 h-3.5" />
                     <span>Dispatch & Deduct Source Stock</span>
@@ -595,7 +701,7 @@ export function StockTransfersPage({ user }: { user: User }) {
                   <button
                     type="button"
                     onClick={handleReceive}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium bg-emerald-700 text-white rounded hover:bg-emerald-800"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs font-medium bg-emerald-700 text-white rounded hover:bg-emerald-800"
                   >
                     <Check className="w-3.5 h-3.5" />
                     <span>Confirm Receipt at Destination</span>

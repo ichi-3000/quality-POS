@@ -225,22 +225,22 @@ export function PurchaseOrdersPage({
         <AlertBanner type={banner.type} message={banner.text} onClose={() => setBanner(null)} />
       )}
 
-      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5 flex-1">
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
+      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5 flex-1">
+          <div className="relative lg:flex-1 lg:min-w-[200px] lg:max-w-xs">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search PO #, supplier, branch..."
-              className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded"
+              className="w-full pl-9 pr-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
           >
             <option value="">All Statuses</option>
             <option value="draft">Draft</option>
@@ -255,7 +255,7 @@ export function PurchaseOrdersPage({
           <button
             type="button"
             onClick={openNewPo}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
+            className="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] lg:min-h-[38px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Create Purchase Order</span>
@@ -272,7 +272,66 @@ export function PurchaseOrdersPage({
         />
       ) : (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {orders.map((po) => (
+              <div key={po.id} className="p-3.5 space-y-2.5 text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-mono-num font-semibold text-[#1A3A5C] text-sm">
+                      {po.po_number}
+                    </div>
+                    <div className="font-medium text-slate-900 mt-0.5">{po.supplier_name}</div>
+                  </div>
+                  <StatusTag status={po.status} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                  <div>
+                    <div className="text-[11px] text-slate-500">Receiving Branch</div>
+                    <div className="font-medium text-slate-800">{po.branch_name}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[11px] text-slate-500">Grand Total</div>
+                    <div className="font-mono-num font-semibold text-[#1A3A5C]">
+                      {formatUGX(po.grand_total)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] text-slate-500">Order Date</div>
+                    <div className="text-slate-700">{formatDate(po.order_date)}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[11px] text-slate-500">Expected Delivery</div>
+                    <div className="text-slate-700">{formatDate(po.expected_delivery_date)}</div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => openDetail(po.id)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-medium text-[#1A3A5C] border border-slate-200 rounded hover:bg-slate-50"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>View Order</span>
+                  </button>
+                  {canManage && po.status === 'draft' && (
+                    <button
+                      type="button"
+                      onClick={() => openEditDraft(po.id)}
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 min-h-[44px] text-xs font-medium text-[#E67E22] border border-slate-200 rounded hover:bg-slate-50"
+                    >
+                      Edit Draft
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#1A3A5C] text-white">
@@ -429,13 +488,19 @@ export function PurchaseOrdersPage({
             </div>
             <div className="p-3 space-y-2.5">
               {lines.map((line, idx) => (
-                <div key={idx} className="grid grid-cols-12 gap-2 items-center">
+                <div
+                  key={idx}
+                  className="grid grid-cols-12 gap-2 items-center bg-[#F5F7FA] sm:bg-transparent p-2.5 sm:p-0 rounded sm:rounded-none border border-slate-200 sm:border-0"
+                >
                   <div className="col-span-12 sm:col-span-5">
+                    <label className="block sm:hidden text-[11px] font-medium text-slate-600 mb-1">
+                      Product
+                    </label>
                     <select
                       required
                       value={line.product_id}
                       onChange={(e) => handleProductChange(idx, e.target.value)}
-                      className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded bg-white"
+                      className="w-full px-2.5 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 text-xs border border-slate-300 rounded bg-white"
                     >
                       <option value="">Select product...</option>
                       {products.map((p) => (
@@ -445,7 +510,10 @@ export function PurchaseOrdersPage({
                       ))}
                     </select>
                   </div>
-                  <div className="col-span-4 sm:col-span-2">
+                  <div className="col-span-6 sm:col-span-2">
+                    <label className="block sm:hidden text-[11px] font-medium text-slate-600 mb-1">
+                      Quantity
+                    </label>
                     <input
                       type="number"
                       min={1}
@@ -458,10 +526,13 @@ export function PurchaseOrdersPage({
                           )
                         )
                       }
-                      className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded font-mono-num text-right"
+                      className="w-full px-2.5 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 text-xs border border-slate-300 rounded bg-white font-mono-num text-right"
                     />
                   </div>
-                  <div className="col-span-4 sm:col-span-2">
+                  <div className="col-span-6 sm:col-span-2">
+                    <label className="block sm:hidden text-[11px] font-medium text-slate-600 mb-1">
+                      Unit Cost (UGX)
+                    </label>
                     <input
                       type="number"
                       min={0}
@@ -474,18 +545,22 @@ export function PurchaseOrdersPage({
                           )
                         )
                       }
-                      className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded font-mono-num text-right"
+                      className="w-full px-2.5 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 text-xs border border-slate-300 rounded bg-white font-mono-num text-right"
                     />
                   </div>
-                  <div className="col-span-3 sm:col-span-2 text-right text-xs font-mono-num font-semibold">
-                    {formatUGX(line.quantity_ordered * line.unit_cost)}
+                  <div className="col-span-9 sm:col-span-2 flex items-center justify-between sm:block sm:text-right text-xs font-mono-num font-semibold">
+                    <span className="sm:hidden text-[11px] font-sans font-normal text-slate-500">
+                      Line Total
+                    </span>
+                    <span>{formatUGX(line.quantity_ordered * line.unit_cost)}</span>
                   </div>
-                  <div className="col-span-1 text-right">
+                  <div className="col-span-3 sm:col-span-1 text-right">
                     {lines.length > 1 && (
                       <button
                         type="button"
                         onClick={() => setLines((prev) => prev.filter((_, i) => i !== idx))}
-                        className="p-1 text-slate-400 hover:text-red-700"
+                        className="inline-flex items-center justify-center min-h-[36px] min-w-[36px] sm:min-h-0 sm:min-w-0 p-1.5 text-slate-400 hover:text-red-700"
+                        aria-label="Remove line item"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -510,17 +585,17 @@ export function PurchaseOrdersPage({
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setFormOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-slate-300 rounded text-slate-700"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium border border-slate-300 rounded text-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
             >
               Save Purchase Order
             </button>
@@ -563,50 +638,54 @@ export function PurchaseOrdersPage({
               </div>
             </div>
 
-            <table className="w-full text-left border border-slate-200">
-              <thead>
-                <tr className="bg-[#1A3A5C] text-white">
-                  <th className="py-2 px-3">SKU</th>
-                  <th className="py-2 px-3">Product</th>
-                  <th className="py-2 px-3 text-right">Ordered</th>
-                  <th className="py-2 px-3 text-right">Received</th>
-                  <th className="py-2 px-3 text-right">Remaining</th>
-                  <th className="py-2 px-3 text-right">Unit Cost</th>
-                  <th className="py-2 px-3 text-right">Line Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {(selectedPo.items || []).map((it, idx) => (
-                  <tr key={idx}>
-                    <td className="py-2 px-3 font-mono-num">{it.sku}</td>
-                    <td className="py-2 px-3 font-medium">{it.product_name}</td>
-                    <td className="py-2 px-3 text-right font-mono-num">{it.quantity_ordered}</td>
-                    <td className="py-2 px-3 text-right font-mono-num text-emerald-700 font-semibold">
-                      {it.quantity_received ?? 0}
+            <div className="overflow-x-auto border border-slate-200 rounded">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-[#1A3A5C] text-white">
+                    <th className="py-2 px-3 whitespace-nowrap">SKU</th>
+                    <th className="py-2 px-3">Product</th>
+                    <th className="py-2 px-3 text-right whitespace-nowrap">Ordered</th>
+                    <th className="py-2 px-3 text-right whitespace-nowrap">Received</th>
+                    <th className="py-2 px-3 text-right whitespace-nowrap">Remaining</th>
+                    <th className="py-2 px-3 text-right whitespace-nowrap">Unit Cost</th>
+                    <th className="py-2 px-3 text-right whitespace-nowrap">Line Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {(selectedPo.items || []).map((it, idx) => (
+                    <tr key={idx}>
+                      <td className="py-2 px-3 font-mono-num whitespace-nowrap">{it.sku}</td>
+                      <td className="py-2 px-3 font-medium">{it.product_name}</td>
+                      <td className="py-2 px-3 text-right font-mono-num whitespace-nowrap">
+                        {it.quantity_ordered}
+                      </td>
+                      <td className="py-2 px-3 text-right font-mono-num text-emerald-700 font-semibold whitespace-nowrap">
+                        {it.quantity_received ?? 0}
+                      </td>
+                      <td className="py-2 px-3 text-right font-mono-num text-amber-700 whitespace-nowrap">
+                        {it.quantity_remaining ?? it.quantity_ordered - (it.quantity_received || 0)}
+                      </td>
+                      <td className="py-2 px-3 text-right font-mono-num whitespace-nowrap">
+                        {formatUGX(it.unit_cost)}
+                      </td>
+                      <td className="py-2 px-3 text-right font-mono-num font-semibold whitespace-nowrap">
+                        {formatUGX(it.line_total ?? it.quantity_ordered * it.unit_cost)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="bg-[#F5F7FA] border-t border-slate-200 font-semibold">
+                    <td colSpan={6} className="py-2.5 px-3 text-right">
+                      Grand Total
                     </td>
-                    <td className="py-2 px-3 text-right font-mono-num text-amber-700">
-                      {it.quantity_remaining ?? it.quantity_ordered - (it.quantity_received || 0)}
-                    </td>
-                    <td className="py-2 px-3 text-right font-mono-num">
-                      {formatUGX(it.unit_cost)}
-                    </td>
-                    <td className="py-2 px-3 text-right font-mono-num font-semibold">
-                      {formatUGX(it.line_total ?? it.quantity_ordered * it.unit_cost)}
+                    <td className="py-2.5 px-3 text-right font-mono-num text-[#1A3A5C] whitespace-nowrap">
+                      {formatUGX(selectedPo.grand_total)}
                     </td>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="bg-[#F5F7FA] border-t border-slate-200 font-semibold">
-                  <td colSpan={6} className="py-2.5 px-3 text-right">
-                    Grand Total
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-mono-num text-[#1A3A5C]">
-                    {formatUGX(selectedPo.grand_total)}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+                </tfoot>
+              </table>
+            </div>
 
             {selectedPo.grns && selectedPo.grns.length > 0 && (
               <div>
@@ -615,7 +694,7 @@ export function PurchaseOrdersPage({
                   {selectedPo.grns.map((g) => (
                     <div
                       key={g.id}
-                      className="flex items-center justify-between px-3 py-2 bg-[#F5F7FA] border border-slate-200 rounded"
+                      className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-[#F5F7FA] border border-slate-200 rounded"
                     >
                       <span className="font-mono-num font-medium">{g.grn_number}</span>
                       <span>{formatDate(g.date_received)}</span>
@@ -626,12 +705,12 @@ export function PurchaseOrdersPage({
               </div>
             )}
 
-            <div className="flex flex-wrap justify-between gap-2 pt-3 border-t border-slate-200 no-print">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-between gap-2 pt-3 border-t border-slate-200 no-print">
+              <div className="grid grid-cols-2 sm:flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] sm:min-h-0 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Print</span>
@@ -639,19 +718,19 @@ export function PurchaseOrdersPage({
                 <button
                   type="button"
                   onClick={() => downloadPoPdf(selectedPo)}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] sm:min-h-0 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download PDF</span>
                 </button>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 {canManage && selectedPo.status === 'draft' && (
                   <button
                     type="button"
                     onClick={() => handleStatusAction(selectedPo.id, 'send')}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Mark as Sent</span>
@@ -661,7 +740,7 @@ export function PurchaseOrdersPage({
                   <button
                     type="button"
                     onClick={() => handleStatusAction(selectedPo.id, 'cancel')}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-red-700 border border-red-200 rounded hover:bg-red-50"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] sm:min-h-0 text-xs font-medium text-red-700 border border-red-200 rounded hover:bg-red-50"
                   >
                     <XCircle className="w-3.5 h-3.5" />
                     <span>Cancel PO</span>
@@ -675,7 +754,7 @@ export function PurchaseOrdersPage({
                         setDetailOpen(false);
                         onNavigate('stock-intake');
                       }}
-                      className="px-4 py-2 text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47]"
+                      className="px-4 py-2 min-h-[44px] sm:min-h-0 text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47]"
                     >
                       Receive via GRN
                     </button>

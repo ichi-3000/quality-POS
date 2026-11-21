@@ -119,22 +119,22 @@ export function SuppliersPage() {
         <AlertBanner type={banner.type} message={banner.text} onClose={() => setBanner(null)} />
       )}
 
-      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5 flex-1">
-          <div className="relative flex-1 min-w-[200px] max-w-sm">
+      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5 flex-1">
+          <div className="relative sm:col-span-2 lg:flex-1 lg:min-w-[200px] lg:max-w-sm">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search supplier name, code, contact..."
-              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+              className="w-full pl-9 pr-3 py-2 min-h-[44px] lg:min-h-[38px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[38px] text-sm border border-slate-300 rounded bg-white sm:col-span-2 lg:col-span-1"
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -144,7 +144,7 @@ export function SuppliersPage() {
         <button
           type="button"
           onClick={openAdd}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
+          className="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] lg:min-h-[38px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Add Supplier</span>
@@ -160,7 +160,72 @@ export function SuppliersPage() {
         />
       ) : (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {suppliers.map((s) => (
+              <div key={s.id} className="p-3.5 space-y-2.5 text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-mono-num font-semibold text-[#1A3A5C]">
+                      {s.supplier_code}
+                    </div>
+                    <div className="font-semibold text-sm text-slate-900 mt-0.5">{s.name}</div>
+                    {s.tin && <div className="text-[11px] text-slate-500">TIN: {s.tin}</div>}
+                  </div>
+                  <StatusTag status={s.status} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                  <div>
+                    <div className="text-[11px] text-slate-500">Contact Person</div>
+                    <div className="font-medium text-slate-800">{s.contact_person || '—'}</div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] text-slate-500">Phone</div>
+                    <div className="font-medium text-slate-800">{s.phone || '—'}</div>
+                  </div>
+                  <div className="col-span-2">
+                    <div className="text-[11px] text-slate-500">Email</div>
+                    <div className="text-slate-700 break-all">{s.email || '—'}</div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] text-slate-500">Deliveries (GRNs)</div>
+                    <div className="font-mono-num font-semibold text-slate-900">
+                      {s.delivery_count ?? 0}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] text-slate-500">Purchase Orders</div>
+                    <div className="font-mono-num font-semibold text-slate-900">
+                      {s.po_count ?? 0}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => openProfile(s.id)}
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-medium text-[#1A3A5C] border border-slate-200 rounded hover:bg-slate-50"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Profile</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEdit(s)}
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-medium text-[#E67E22] border border-slate-200 rounded hover:bg-slate-50"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                    <span>Edit</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#1A3A5C] text-white">
@@ -329,7 +394,7 @@ export function SuppliersPage() {
               <select
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full sm:w-auto px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -337,17 +402,17 @@ export function SuppliersPage() {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setFormOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-slate-300 rounded text-slate-700"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium border border-slate-300 rounded text-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
             >
               Save Supplier
             </button>
@@ -397,28 +462,30 @@ export function SuppliersPage() {
               {profile.products.length === 0 ? (
                 <p className="text-slate-500">No products have this supplier marked as preferred.</p>
               ) : (
-                <table className="w-full text-left border border-slate-200">
-                  <thead>
-                    <tr className="bg-[#F5F7FA] border-b border-slate-200">
-                      <th className="py-2 px-3">SKU</th>
-                      <th className="py-2 px-3">Product</th>
-                      <th className="py-2 px-3">Category</th>
-                      <th className="py-2 px-3 text-right">Unit Cost</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {profile.products.map((p) => (
-                      <tr key={p.id}>
-                        <td className="py-2 px-3 font-mono-num">{p.sku}</td>
-                        <td className="py-2 px-3 font-medium">{p.name}</td>
-                        <td className="py-2 px-3">{p.category_name}</td>
-                        <td className="py-2 px-3 text-right font-mono-num">
-                          {formatUGX(p.unit_cost)}
-                        </td>
+                <div className="overflow-x-auto border border-slate-200 rounded">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-[#F5F7FA] border-b border-slate-200">
+                        <th className="py-2 px-3 whitespace-nowrap">SKU</th>
+                        <th className="py-2 px-3">Product</th>
+                        <th className="py-2 px-3 whitespace-nowrap">Category</th>
+                        <th className="py-2 px-3 text-right whitespace-nowrap">Unit Cost</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {profile.products.map((p) => (
+                        <tr key={p.id}>
+                          <td className="py-2 px-3 font-mono-num whitespace-nowrap">{p.sku}</td>
+                          <td className="py-2 px-3 font-medium">{p.name}</td>
+                          <td className="py-2 px-3 whitespace-nowrap">{p.category_name}</td>
+                          <td className="py-2 px-3 text-right font-mono-num whitespace-nowrap">
+                            {formatUGX(p.unit_cost)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
 
@@ -429,32 +496,36 @@ export function SuppliersPage() {
               {profile.deliveries.length === 0 ? (
                 <p className="text-slate-500">No GRN deliveries recorded yet.</p>
               ) : (
-                <table className="w-full text-left border border-slate-200">
-                  <thead>
-                    <tr className="bg-[#F5F7FA] border-b border-slate-200">
-                      <th className="py-2 px-3">GRN #</th>
-                      <th className="py-2 px-3">Branch</th>
-                      <th className="py-2 px-3">Date</th>
-                      <th className="py-2 px-3 text-right">Value</th>
-                      <th className="py-2 px-3">Received By</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {profile.deliveries.map((d) => (
-                      <tr key={d.id}>
-                        <td className="py-2 px-3 font-mono-num text-[#1A3A5C] font-medium">
-                          {d.grn_number}
-                        </td>
-                        <td className="py-2 px-3">{d.branch_name}</td>
-                        <td className="py-2 px-3">{formatDate(d.date_received)}</td>
-                        <td className="py-2 px-3 text-right font-mono-num font-semibold">
-                          {formatUGX(d.grand_total)}
-                        </td>
-                        <td className="py-2 px-3">{d.received_by_name}</td>
+                <div className="overflow-x-auto border border-slate-200 rounded">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-[#F5F7FA] border-b border-slate-200">
+                        <th className="py-2 px-3 whitespace-nowrap">GRN #</th>
+                        <th className="py-2 px-3 whitespace-nowrap">Branch</th>
+                        <th className="py-2 px-3 whitespace-nowrap">Date</th>
+                        <th className="py-2 px-3 text-right whitespace-nowrap">Value</th>
+                        <th className="py-2 px-3 whitespace-nowrap">Received By</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {profile.deliveries.map((d) => (
+                        <tr key={d.id}>
+                          <td className="py-2 px-3 font-mono-num text-[#1A3A5C] font-medium whitespace-nowrap">
+                            {d.grn_number}
+                          </td>
+                          <td className="py-2 px-3 whitespace-nowrap">{d.branch_name}</td>
+                          <td className="py-2 px-3 whitespace-nowrap">
+                            {formatDate(d.date_received)}
+                          </td>
+                          <td className="py-2 px-3 text-right font-mono-num font-semibold whitespace-nowrap">
+                            {formatUGX(d.grand_total)}
+                          </td>
+                          <td className="py-2 px-3 whitespace-nowrap">{d.received_by_name}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>

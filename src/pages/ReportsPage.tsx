@@ -156,44 +156,61 @@ export function ReportsPage({ user }: { user: User }) {
       {error && <AlertBanner type="error" message={error} onClose={() => setError(null)} />}
 
       {/* Report Selector Tabs */}
-      <div className="bg-white border border-slate-200 rounded-md p-4 no-print">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <div className="bg-white border border-slate-200 rounded-md p-4 no-print space-y-3">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-semibold text-[#1A3A5C]">Management & Inventory Reports</h2>
             <p className="text-xs text-slate-500">
               All figures are computed directly from verified database stock and ledger records
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-3 sm:flex items-center gap-2">
             <button
               type="button"
               onClick={handleExportCsv}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+              className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export CSV</span>
+              <Download className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">CSV</span>
             </button>
             <button
               type="button"
               onClick={handleExportPdf}
               disabled={rows.length === 0}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47] disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47] disabled:opacity-50"
             >
-              <FileText className="w-3.5 h-3.5" />
-              <span>Download PDF</span>
+              <FileText className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">PDF</span>
             </button>
             <button
               type="button"
               onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
+              className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-xs font-medium bg-[#E67E22] text-white rounded hover:bg-[#cf6d17]"
             >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Print</span>
+              <Printer className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Print</span>
             </button>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
+        {/* Mobile Report Select */}
+        <div className="md:hidden">
+          <label className="block text-[11px] font-medium text-slate-600 mb-1">Select Report</label>
+          <select
+            value={reportType}
+            onChange={(e) => setReportType(e.target.value as ReportId)}
+            className="w-full px-3 py-2 min-h-[44px] text-sm font-medium text-[#1A3A5C] border border-slate-300 rounded bg-[#F5F7FA]"
+          >
+            {REPORT_TYPES.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Desktop Report Tabs */}
+        <div className="hidden md:flex flex-wrap gap-1.5">
           {REPORT_TYPES.map((r) => (
             <button
               key={r.id}
@@ -212,12 +229,12 @@ export function ReportsPage({ user }: { user: User }) {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-wrap items-center gap-2.5 no-print">
+      <div className="bg-white border border-slate-200 rounded-md p-4 grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5 no-print">
         {isGlobal && (
           <select
             value={branchId}
             onChange={(e) => setBranchId(e.target.value)}
-            className="px-3 py-1.5 text-xs border border-slate-300 rounded bg-white"
+            className="w-full lg:w-auto px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm lg:text-xs border border-slate-300 rounded bg-white"
           >
             <option value="">All Branches</option>
             {branches.map((b) => (
@@ -230,7 +247,7 @@ export function ReportsPage({ user }: { user: User }) {
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="px-3 py-1.5 text-xs border border-slate-300 rounded bg-white"
+          className="w-full lg:w-auto px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm lg:text-xs border border-slate-300 rounded bg-white"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -242,7 +259,7 @@ export function ReportsPage({ user }: { user: User }) {
         <select
           value={productId}
           onChange={(e) => setProductId(e.target.value)}
-          className="px-3 py-1.5 text-xs border border-slate-300 rounded bg-white max-w-[200px]"
+          className="w-full lg:w-auto lg:max-w-[200px] px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm lg:text-xs border border-slate-300 rounded bg-white"
         >
           <option value="">All Products</option>
           {products.map((p) => (
@@ -254,7 +271,7 @@ export function ReportsPage({ user }: { user: User }) {
         <select
           value={supplierId}
           onChange={(e) => setSupplierId(e.target.value)}
-          className="px-3 py-1.5 text-xs border border-slate-300 rounded bg-white"
+          className="w-full lg:w-auto px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm lg:text-xs border border-slate-300 rounded bg-white"
         >
           <option value="">All Suppliers</option>
           {suppliers.map((s) => (
@@ -266,7 +283,7 @@ export function ReportsPage({ user }: { user: User }) {
         <select
           value={txType}
           onChange={(e) => setTxType(e.target.value)}
-          className="px-3 py-1.5 text-xs border border-slate-300 rounded bg-white"
+          className="w-full lg:w-auto px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm lg:text-xs border border-slate-300 rounded bg-white"
         >
           <option value="">All Tx Types</option>
           <option value="opening_stock">Opening Stock</option>
@@ -282,13 +299,15 @@ export function ReportsPage({ user }: { user: User }) {
           type="date"
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
-          className="px-2.5 py-1.5 text-xs border border-slate-300 rounded"
+          aria-label="Date From"
+          className="w-full lg:w-auto px-2.5 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm lg:text-xs border border-slate-300 rounded"
         />
         <input
           type="date"
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
-          className="px-2.5 py-1.5 text-xs border border-slate-300 rounded"
+          aria-label="Date To"
+          className="w-full lg:w-auto px-2.5 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm lg:text-xs border border-slate-300 rounded"
         />
         <button
           type="button"
@@ -301,7 +320,7 @@ export function ReportsPage({ user }: { user: User }) {
             setDateFrom('');
             setDateTo('');
           }}
-          className="px-3 py-1.5 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+          className="w-full sm:col-span-2 lg:w-auto px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
         >
           Clear Filters
         </button>
@@ -317,11 +336,33 @@ export function ReportsPage({ user }: { user: User }) {
         />
       ) : (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-          <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-[#1A3A5C]">{activeMeta.label}</h3>
-            <span className="text-xs text-slate-500 font-mono-num">{rows.length} row(s)</span>
+          <div className="px-4 sm:px-5 py-3.5 border-b border-slate-200 flex items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold text-[#1A3A5C] truncate">{activeMeta.label}</h3>
+            <span className="text-xs text-slate-500 font-mono-num shrink-0">
+              {rows.length} row(s)
+            </span>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Mobile Cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {rows.map((r, idx) => (
+              <div key={idx} className="p-3.5 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+                {columns.map((col) => (
+                  <div key={col} className="min-w-0">
+                    <div className="text-[10px] uppercase tracking-wide text-slate-500 truncate">
+                      {col.replace(/_/g, ' ')}
+                    </div>
+                    <div className="mt-0.5 text-slate-900 break-words">
+                      {formatCell(col, r[col])}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#1A3A5C] text-white">

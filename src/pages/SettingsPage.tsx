@@ -70,7 +70,7 @@ export function SettingsPage() {
       {/* System Preferences */}
       <form
         onSubmit={saveSettings}
-        className="bg-white border border-slate-200 rounded-md p-6 space-y-4"
+        className="bg-white border border-slate-200 rounded-md p-4 sm:p-6 space-y-4"
       >
         <div className="border-b border-slate-200 pb-3">
           <h2 className="text-sm font-semibold text-[#1A3A5C]">
@@ -88,7 +88,7 @@ export function SettingsPage() {
               type="text"
               value={settings.business_name}
               onChange={(e) => setSettings({ ...settings, business_name: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded"
+              className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded"
             />
           </div>
           <div>
@@ -97,7 +97,7 @@ export function SettingsPage() {
               type="text"
               value={settings.system_name}
               onChange={(e) => setSettings({ ...settings, system_name: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded"
+              className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded"
             />
           </div>
           <div>
@@ -108,7 +108,7 @@ export function SettingsPage() {
               type="text"
               value={settings.currency}
               onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num"
+              className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num"
             />
           </div>
           <div>
@@ -120,7 +120,7 @@ export function SettingsPage() {
               min={1}
               value={settings.default_reorder_level}
               onChange={(e) => setSettings({ ...settings, default_reorder_level: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num"
+              className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num"
             />
           </div>
           <div>
@@ -134,7 +134,7 @@ export function SettingsPage() {
               onChange={(e) =>
                 setSettings({ ...settings, default_reorder_multiplier: e.target.value })
               }
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num"
+              className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num"
             />
           </div>
           <div>
@@ -146,7 +146,7 @@ export function SettingsPage() {
               onChange={(e) =>
                 setSettings({ ...settings, low_stock_alerts_enabled: e.target.value })
               }
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+              className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
             >
               <option value="true">Enabled</option>
               <option value="false">Disabled</option>
@@ -157,7 +157,7 @@ export function SettingsPage() {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
           >
             <Save className="w-4 h-4" />
             <span>Save Settings</span>
@@ -167,13 +167,52 @@ export function SettingsPage() {
 
       {/* Branch Configuration */}
       <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200">
+        <div className="px-4 sm:px-6 py-4 border-b border-slate-200">
           <h3 className="text-sm font-semibold text-[#1A3A5C]">Supermarket Branch Network</h3>
           <p className="text-xs text-slate-500">
             Manage contact details, location, and assigned managers for each Kampala branch
           </p>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Mobile Branch Cards */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {branches.map((b) => (
+            <div key={b.id} className="p-4 space-y-2.5 text-xs">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="font-mono-num font-semibold text-[#1A3A5C]">{b.code}</div>
+                  <div className="font-semibold text-sm text-slate-900 mt-0.5">{b.name}</div>
+                </div>
+                <StatusTag status={b.status} />
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                <div>
+                  <div className="text-[11px] text-slate-500">Location</div>
+                  <div className="text-slate-700">{b.location}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-slate-500">Manager</div>
+                  <div className="font-medium text-slate-800">{b.manager_name}</div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-[11px] text-slate-500">Contact</div>
+                  <div className="text-slate-700">{b.contact_phone}</div>
+                  <div className="text-slate-500 break-all">{b.contact_email}</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingBranch(b)}
+                className="w-full px-3 py-2 min-h-[44px] text-xs font-medium text-[#1A3A5C] border border-slate-200 rounded hover:bg-slate-50"
+              >
+                Edit Branch
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Branch Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-[#1A3A5C] text-white">
@@ -218,7 +257,7 @@ export function SettingsPage() {
         {editingBranch && (
           <form
             onSubmit={saveBranch}
-            className="p-6 bg-[#F5F7FA] border-t border-slate-200 space-y-4"
+            className="p-4 sm:p-6 bg-[#F5F7FA] border-t border-slate-200 space-y-4"
           >
             <h4 className="text-xs font-semibold text-[#1A3A5C]">
               Editing Branch: {editingBranch.code}
@@ -229,14 +268,14 @@ export function SettingsPage() {
                 value={editingBranch.name}
                 onChange={(e) => setEditingBranch({ ...editingBranch, name: e.target.value })}
                 placeholder="Branch Name"
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               />
               <input
                 type="text"
                 value={editingBranch.location}
                 onChange={(e) => setEditingBranch({ ...editingBranch, location: e.target.value })}
                 placeholder="Location"
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               />
               <input
                 type="text"
@@ -245,7 +284,7 @@ export function SettingsPage() {
                   setEditingBranch({ ...editingBranch, manager_name: e.target.value })
                 }
                 placeholder="Branch Manager"
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               />
               <input
                 type="text"
@@ -254,7 +293,7 @@ export function SettingsPage() {
                   setEditingBranch({ ...editingBranch, contact_phone: e.target.value })
                 }
                 placeholder="Phone"
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               />
               <input
                 type="email"
@@ -263,7 +302,7 @@ export function SettingsPage() {
                   setEditingBranch({ ...editingBranch, contact_email: e.target.value })
                 }
                 placeholder="Email"
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               />
               <select
                 value={editingBranch.status}
@@ -273,23 +312,23 @@ export function SettingsPage() {
                     status: e.target.value as 'active' | 'inactive',
                   })
                 }
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setEditingBranch(null)}
-                className="px-3 py-1.5 text-xs border border-slate-300 rounded bg-white"
+                className="px-4 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 text-xs font-medium border border-slate-300 rounded bg-white"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 text-xs font-medium bg-[#1A3A5C] text-white rounded"
+                className="px-4 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 text-xs font-medium bg-[#1A3A5C] text-white rounded"
               >
                 Save Branch
               </button>

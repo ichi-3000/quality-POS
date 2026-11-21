@@ -1,10 +1,17 @@
 @import "tailwindcss";
 
 @layer base {
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
   body {
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: #F5F7FA;
     color: #0F172A;
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, h4, .font-display {
@@ -24,6 +31,7 @@
 @media print {
   aside,
   header,
+  nav.mobile-bottom-nav,
   .no-print {
     display: none !important;
   }

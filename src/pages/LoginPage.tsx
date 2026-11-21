@@ -46,27 +46,27 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
   return (
     <div className="min-h-screen bg-[#F5F7FA] flex flex-col lg:flex-row">
       {/* Left Brand Panel */}
-      <div className="lg:w-5/12 bg-[#1A3A5C] text-white p-8 lg:p-14 flex flex-col justify-between">
+      <div className="lg:w-5/12 bg-[#1A3A5C] text-white p-5 sm:p-8 lg:p-14 flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded bg-[#E67E22] flex items-center justify-center font-display font-bold text-lg text-white">
+            <div className="w-10 h-10 rounded bg-[#E67E22] flex items-center justify-center font-display font-bold text-lg text-white shrink-0">
               QS
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="font-display font-bold text-lg tracking-tight">QS-IMS</div>
-              <div className="text-xs text-slate-300">Quality Supermarkets Uganda Limited</div>
+              <div className="text-xs text-slate-300 truncate">Quality Supermarkets Uganda Limited</div>
             </div>
           </div>
 
-          <h1 className="mt-10 font-display text-3xl lg:text-4xl font-bold leading-tight text-white">
+          <h1 className="mt-5 sm:mt-8 lg:mt-10 font-display text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-white">
             Centralized Multi-Branch Inventory Control
           </h1>
-          <p className="mt-4 text-sm text-slate-200 leading-relaxed max-w-md">
+          <p className="mt-2.5 sm:mt-4 text-xs sm:text-sm text-slate-200 leading-relaxed max-w-md">
             Real-time stock visibility, atomic Goods Received Notes, auditable stock issues,
             inter-branch transfers, and procurement reconciliation across Kampala branches.
           </p>
 
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3 border-t border-white/15 pt-6">
+          <div className="mt-5 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2 sm:gap-3 border-t border-white/15 pt-4 sm:pt-6">
             <div className="text-xs text-slate-200">
               <span className="font-semibold text-white">Ntinda – Head Office</span> · Code: NTINDA
             </div>
@@ -79,26 +79,26 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           </div>
         </div>
 
-        <div className="mt-10 text-xs text-slate-300 border-t border-white/15 pt-4">
+        <div className="hidden lg:block mt-10 text-xs text-slate-300 border-t border-white/15 pt-4">
           Quality Supermarkets Uganda Limited · Inventory Operations Platform
         </div>
       </div>
 
       {/* Right Sign-In Panel */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-md bg-white border border-slate-200 rounded-md p-6 sm:p-8">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-12">
+        <div className="w-full max-w-md bg-white border border-slate-200 rounded-md p-5 sm:p-8">
           <div className="flex items-center gap-2 text-xs font-medium text-[#1A3A5C]">
             <ShieldCheck className="w-4 h-4 text-[#E67E22]" />
             <span>Authenticated Access</span>
           </div>
-          <h2 className="mt-2 font-display text-2xl font-bold text-slate-900">
+          <h2 className="mt-2 font-display text-xl sm:text-2xl font-bold text-slate-900">
             Sign in to QS-IMS
           </h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
             Enter your assigned staff username or email address.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-5 sm:mt-6 space-y-4">
             {error && <AlertBanner type="error" message={error} />}
 
             <div>
@@ -113,7 +113,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="e.g. admin or mgr.najjera"
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+                  className="w-full pl-9 pr-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
                 />
               </div>
             </div>
@@ -129,7 +129,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+                  className="w-full pl-9 pr-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
                 />
               </div>
             </div>
@@ -137,7 +137,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 bg-[#E67E22] hover:bg-[#cf6d17] disabled:opacity-60 text-white text-sm font-semibold rounded transition-colors"
+              className="w-full py-2.5 px-4 min-h-[44px] bg-[#E67E22] hover:bg-[#cf6d17] disabled:opacity-60 text-white text-sm font-semibold rounded transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -159,7 +159,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                     setPassword(acc.pass);
                     submitCredentials(acc.username, acc.pass);
                   }}
-                  className="text-left px-3 py-2 border border-slate-200 rounded hover:border-[#1A3A5C] hover:bg-slate-50 transition-colors"
+                  className="text-left px-3 py-2.5 min-h-[44px] border border-slate-200 rounded hover:border-[#1A3A5C] hover:bg-slate-50 transition-colors"
                 >
                   <div className="text-xs font-semibold text-[#1A3A5C]">{acc.label}</div>
                   <div className="text-[11px] text-slate-500 font-mono-num">

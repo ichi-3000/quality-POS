@@ -46,7 +46,7 @@ export function AuditLogsPage({ user }: { user: User }) {
     <div className="space-y-4">
       {error && <AlertBanner type="error" message={error} onClose={() => setError(null)} />}
 
-      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[#1A3A5C]">System Audit Trail</h2>
           <p className="text-xs text-slate-500">
@@ -54,8 +54,8 @@ export function AuditLogsPage({ user }: { user: User }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-2.5 w-full lg:w-auto">
+          <div className="relative w-full lg:w-auto">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -65,7 +65,7 @@ export function AuditLogsPage({ user }: { user: User }) {
                 setActionFilter(e.target.value);
               }}
               placeholder="Filter action (e.g. grn, login)..."
-              className="pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded"
+              className="w-full pl-9 pr-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm border border-slate-300 rounded"
             />
           </div>
           {isGlobal && (
@@ -75,7 +75,7 @@ export function AuditLogsPage({ user }: { user: User }) {
                 setPage(1);
                 setBranchFilter(e.target.value);
               }}
-              className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+              className="w-full lg:w-auto px-3 py-2 lg:py-1.5 min-h-[44px] lg:min-h-0 text-sm border border-slate-300 rounded bg-white"
             >
               <option value="">All Branches</option>
               {branches.map((b) => (
@@ -95,7 +95,47 @@ export function AuditLogsPage({ user }: { user: User }) {
         />
       ) : (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {logs.map((l) => (
+              <div key={l.id} className="p-3.5 space-y-2 text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="font-mono-num font-semibold text-[#1A3A5C] break-all">
+                    {l.action}
+                  </div>
+                  <span className="text-[11px] font-mono-num text-slate-500 shrink-0">
+                    {formatDateTime(l.created_at)}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <div className="text-[11px] text-slate-500">User</div>
+                    <div className="font-medium text-slate-800">
+                      {l.user_name || l.username || 'System'}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] text-slate-500">Branch</div>
+                    <div className="text-slate-700">{l.branch_name || 'Global'}</div>
+                  </div>
+                  <div className="col-span-2">
+                    <div className="text-[11px] text-slate-500">Entity</div>
+                    <div className="font-mono-num text-slate-800">
+                      {l.entity_type} {l.entity_id ? `#${l.entity_id}` : ''}
+                    </div>
+                  </div>
+                </div>
+                {l.metadata_json && (
+                  <div className="p-2 bg-[#F5F7FA] border border-slate-200 rounded font-mono-num text-[11px] text-slate-600 break-all">
+                    {l.metadata_json}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#1A3A5C] text-white">
@@ -131,16 +171,16 @@ export function AuditLogsPage({ user }: { user: User }) {
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+          <div className="px-4 py-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-600">
             <span>
               Page {page} of {totalPages}
             </span>
-            <div className="flex gap-2">
+            <div className="flex w-full sm:w-auto gap-2">
               <button
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50"
+                className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-0 border border-slate-300 rounded disabled:opacity-50"
               >
                 Previous
               </button>
@@ -148,7 +188,7 @@ export function AuditLogsPage({ user }: { user: User }) {
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50"
+                className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-0 border border-slate-300 rounded disabled:opacity-50"
               >
                 Next
               </button>

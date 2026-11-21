@@ -88,15 +88,15 @@ export function InventoryPage({
       {error && <AlertBanner type="error" message={error} onClose={() => setError(null)} />}
 
       {/* Tab Switcher + Quick Operational Links */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex p-1 bg-white border border-slate-200 rounded-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="grid grid-cols-2 sm:inline-flex w-full sm:w-auto p-1 bg-white border border-slate-200 rounded-md">
           <button
             type="button"
             onClick={() => {
               setTab('levels');
               setPage(1);
             }}
-            className={`px-4 py-1.5 text-xs font-semibold rounded transition-colors ${
+            className={`px-3 sm:px-4 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[34px] text-xs font-semibold rounded transition-colors ${
               tab === 'levels'
                 ? 'bg-[#1A3A5C] text-white'
                 : 'text-slate-600 hover:text-slate-900'
@@ -110,7 +110,7 @@ export function InventoryPage({
               setTab('ledger');
               setPage(1);
             }}
-            className={`px-4 py-1.5 text-xs font-semibold rounded transition-colors ${
+            className={`px-3 sm:px-4 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[34px] text-xs font-semibold rounded transition-colors ${
               tab === 'ledger'
                 ? 'bg-[#1A3A5C] text-white'
                 : 'text-slate-600 hover:text-slate-900'
@@ -120,7 +120,7 @@ export function InventoryPage({
           </button>
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
           <span className="text-slate-500">
             Stock changes only via recorded GRN, Issue, or Transfer transactions.
           </span>
@@ -128,7 +128,7 @@ export function InventoryPage({
             <button
               type="button"
               onClick={() => onNavigate('stock-intake')}
-              className="px-3 py-1.5 bg-[#E67E22] hover:bg-[#cf6d17] text-white font-medium rounded"
+              className="w-full sm:w-auto px-3 py-2 min-h-[44px] sm:min-h-[34px] bg-[#E67E22] hover:bg-[#cf6d17] text-white font-medium rounded shrink-0"
             >
               Record GRN
             </button>
@@ -137,9 +137,9 @@ export function InventoryPage({
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-wrap items-center gap-2.5">
+      <div className="bg-white border border-slate-200 rounded-md p-4 grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5">
         {tab === 'levels' && (
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
+          <div className="relative sm:col-span-2 lg:flex-1 lg:min-w-[200px] lg:max-w-xs">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -149,7 +149,7 @@ export function InventoryPage({
                 setSearch(e.target.value);
               }}
               placeholder="Search product or SKU..."
-              className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+              className="w-full pl-9 pr-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
             />
           </div>
         )}
@@ -161,7 +161,7 @@ export function InventoryPage({
               setPage(1);
               setBranchId(e.target.value);
             }}
-            className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
           >
             <option value="">All Branches</option>
             {branches.map((b) => (
@@ -180,7 +180,7 @@ export function InventoryPage({
                 setPage(1);
                 setCategoryId(e.target.value);
               }}
-              className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+              className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
@@ -196,7 +196,7 @@ export function InventoryPage({
                 setPage(1);
                 setStatusFilter(e.target.value);
               }}
-              className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+              className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
             >
               <option value="">All Stock Statuses</option>
               <option value="in_stock">In Stock</option>
@@ -207,7 +207,7 @@ export function InventoryPage({
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+              className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
             >
               <option value="">Sort: Product Name</option>
               <option value="qty_asc">Quantity (Low to High)</option>
@@ -223,7 +223,7 @@ export function InventoryPage({
                 setPage(1);
                 setTxType(e.target.value);
               }}
-              className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+              className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
             >
               <option value="">All Transaction Types</option>
               <option value="opening_stock">Opening Stock</option>
@@ -242,7 +242,8 @@ export function InventoryPage({
                 setPage(1);
                 setDateFrom(e.target.value);
               }}
-              className="px-2.5 py-1.5 text-sm border border-slate-300 rounded"
+              aria-label="Date from"
+              className="w-full lg:w-auto px-2.5 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded"
             />
             <input
               type="date"
@@ -251,7 +252,8 @@ export function InventoryPage({
                 setPage(1);
                 setDateTo(e.target.value);
               }}
-              className="px-2.5 py-1.5 text-sm border border-slate-300 rounded"
+              aria-label="Date to"
+              className="w-full lg:w-auto px-2.5 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded"
             />
           </>
         )}
@@ -269,13 +271,13 @@ export function InventoryPage({
             setDateTo('');
             setPage(1);
           }}
-          className="px-3 py-1.5 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+          className="w-full sm:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
         >
           Clear Filters
         </button>
       </div>
 
-      {/* Table */}
+      {/* Table / Mobile Cards */}
       {tab === 'levels' ? (
         items.length === 0 ? (
           <EmptyState
@@ -284,7 +286,49 @@ export function InventoryPage({
           />
         ) : (
           <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Stock Level Cards */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {items.map((row) => (
+                <div key={`m-stk-${row.id}`} className="p-4 space-y-2.5 text-xs">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-mono-num text-[11px] font-semibold text-[#1A3A5C]">
+                        {row.sku} · {row.branch_name} ({row.branch_code})
+                      </div>
+                      <div className="text-sm font-semibold text-slate-900 mt-0.5">
+                        {row.product_name}
+                      </div>
+                      <div className="text-[11px] text-slate-500">{row.category_name}</div>
+                    </div>
+                    <StatusTag status={row.stock_status} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 bg-[#F5F7FA] p-2.5 rounded border border-slate-200">
+                    <div>
+                      <div className="text-[10px] text-slate-500">On Hand (Min {row.reorder_level})</div>
+                      <div className="font-mono-num font-bold text-slate-900">
+                        {row.quantity_on_hand}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-slate-500">Unit Cost</div>
+                      <div className="font-mono-num">{formatUGX(row.unit_cost)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-slate-500">Stock Value</div>
+                      <div className="font-mono-num font-semibold text-[#1A3A5C]">
+                        {formatUGX(row.stock_value)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-[11px] text-slate-500">
+                    Last movement: {formatDateTime(row.last_movement_at || row.updated_at)}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Stock Level Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="bg-[#1A3A5C] text-white">
@@ -335,7 +379,7 @@ export function InventoryPage({
                 </tbody>
               </table>
             </div>
-            <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+            <div className="px-4 py-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
               <span>
                 Page {page} of {totalPages} ({totalCount} branch-product records)
               </span>
@@ -344,7 +388,7 @@ export function InventoryPage({
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50"
+                  className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-[32px] border border-slate-300 rounded disabled:opacity-50"
                 >
                   Previous
                 </button>
@@ -352,7 +396,7 @@ export function InventoryPage({
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50"
+                  className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-[32px] border border-slate-300 rounded disabled:opacity-50"
                 >
                   Next
                 </button>
@@ -367,7 +411,46 @@ export function InventoryPage({
         />
       ) : (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Ledger Cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {transactions.map((tx) => (
+              <div key={`m-led-${tx.id}`} className="p-4 space-y-2 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono-num font-semibold text-[#1A3A5C]">
+                    {tx.reference_number}
+                  </span>
+                  <StatusTag status={tx.transaction_type} />
+                </div>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-semibold text-slate-900">{tx.product_name}</div>
+                    <div className="text-[11px] text-slate-500 font-mono-num">
+                      {tx.sku} · {tx.branch_name}
+                    </div>
+                  </div>
+                  <div className="text-right font-mono-num shrink-0">
+                    <div className="font-bold">
+                      {tx.quantity_added > 0 ? (
+                        <span className="text-emerald-700">+{tx.quantity_added}</span>
+                      ) : (
+                        <span className="text-red-700">-{tx.quantity_removed}</span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-slate-500">Bal: {tx.balance_after}</div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-500">
+                  <span className="font-mono-num truncate mr-2">{tx.transaction_ref}</span>
+                  <span className="shrink-0">
+                    {tx.user_name} · {formatDateTime(tx.created_at)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Ledger Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#1A3A5C] text-white">
@@ -418,7 +501,7 @@ export function InventoryPage({
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+          <div className="px-4 py-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
             <span>
               Page {page} of {totalPages} ({totalCount} ledger entries)
             </span>
@@ -427,7 +510,7 @@ export function InventoryPage({
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50"
+                className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-[32px] border border-slate-300 rounded disabled:opacity-50"
               >
                 Previous
               </button>
@@ -435,7 +518,7 @@ export function InventoryPage({
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50"
+                className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-[32px] border border-slate-300 rounded disabled:opacity-50"
               >
                 Next
               </button>

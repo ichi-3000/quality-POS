@@ -153,14 +153,14 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Header Controls & Filters */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-slate-200 rounded-md p-4">
-        <div>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white border border-slate-200 rounded-md p-4">
+        <div className="min-w-0">
           <div className="text-xs text-slate-500">
             {user.role_name} · {user.branch_name || 'Consolidated Network View'}
           </div>
-          <h2 className="text-lg font-semibold text-[#1A3A5C]">
+          <h2 className="text-base sm:text-lg font-semibold text-[#1A3A5C]">
             {user.role === 'admin' && 'Enterprise Inventory Overview'}
             {user.role === 'procurement_manager' && 'Head Office Procurement & Stock Overview'}
             {user.role === 'branch_manager' && `${user.branch_name} — Branch Operations`}
@@ -168,12 +168,12 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
           </h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:flex-wrap items-center gap-2.5 w-full lg:w-auto">
           {isGlobal && (
             <select
               value={branchFilter}
               onChange={(e) => setBranchFilter(e.target.value)}
-              className="px-3 py-1.5 text-xs bg-white border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+              className="w-full md:w-auto px-3 py-2 min-h-[44px] md:min-h-[36px] text-sm md:text-xs bg-white border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
             >
               <option value="">All Branches</option>
               {branches.map((b) => (
@@ -188,14 +188,14 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
             aria-label="Date from"
-            className="px-2.5 py-1.5 text-xs border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+            className="w-full md:w-auto px-2.5 py-2 min-h-[44px] md:min-h-[36px] text-sm md:text-xs border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
           />
           <input
             type="date"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
             aria-label="Date to"
-            className="px-2.5 py-1.5 text-xs border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+            className="w-full md:w-auto px-2.5 py-2 min-h-[44px] md:min-h-[36px] text-sm md:text-xs border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
           />
           {(branchFilter || dateFrom || dateTo) && (
             <button
@@ -205,7 +205,7 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
                 setDateFrom('');
                 setDateTo('');
               }}
-              className="px-3 py-1.5 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+              className="w-full md:w-auto px-3 py-2 min-h-[44px] md:min-h-[36px] text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
             >
               Clear Filters
             </button>
@@ -215,25 +215,25 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
 
       {/* Role-Specific Quick Actions for Stock Controller */}
       {user.role === 'stock_controller' && (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3">
           <button
             type="button"
             onClick={() => onNavigate('stock-intake')}
-            className="px-4 py-2 text-sm font-medium bg-[#E67E22] hover:bg-[#cf6d17] text-white rounded"
+            className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium bg-[#E67E22] hover:bg-[#cf6d17] text-white rounded"
           >
             Record Goods Received (GRN)
           </button>
           <button
             type="button"
             onClick={() => onNavigate('stock-issues')}
-            className="px-4 py-2 text-sm font-medium bg-[#1A3A5C] hover:bg-[#142d47] text-white rounded"
+            className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium bg-[#1A3A5C] hover:bg-[#142d47] text-white rounded"
           >
             Record Stock Issue
           </button>
           <button
             type="button"
             onClick={() => onNavigate('stock-transfers')}
-            className="px-4 py-2 text-sm font-medium bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 rounded"
+            className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 rounded"
           >
             Confirm Incoming Transfers ({data.awaitingReceiptTransfers.length})
           </button>
@@ -241,13 +241,13 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
       )}
 
       {/* Primary KPI Strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-white border border-slate-200 rounded-md p-4">
           <div className="flex items-center justify-between text-xs text-slate-500">
             <span>Total Stock Valuation</span>
             <TrendingUp className="w-4 h-4 text-[#1A3A5C]" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-[#1A3A5C] font-mono-num">
+          <div className="mt-2 text-xl sm:text-2xl font-bold text-[#1A3A5C] font-mono-num">
             {formatUGX(data.kpis.total_stock_value)}
           </div>
           <div className="mt-1 text-xs text-slate-500 font-mono-num">
@@ -260,7 +260,7 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
             <span>Active Catalogue SKUs</span>
             <Package className="w-4 h-4 text-[#1A3A5C]" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-slate-900 font-mono-num">
+          <div className="mt-2 text-xl sm:text-2xl font-bold text-slate-900 font-mono-num">
             {data.kpis.active_products}
             <span className="text-sm font-normal text-slate-500"> / {data.kpis.total_products}</span>
           </div>
@@ -275,10 +275,10 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
             <AlertTriangle className="w-4 h-4 text-[#D97706]" />
           </div>
           <div className="mt-2 flex items-baseline gap-3">
-            <span className="text-2xl font-bold text-[#D97706] font-mono-num">
+            <span className="text-xl sm:text-2xl font-bold text-[#D97706] font-mono-num">
               {data.kpis.low_stock_count} Low
             </span>
-            <span className="text-lg font-bold text-[#DC2626] font-mono-num">
+            <span className="text-base sm:text-lg font-bold text-[#DC2626] font-mono-num">
               {data.kpis.out_of_stock_count} Out
             </span>
           </div>
@@ -293,10 +293,10 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
             <ClipboardList className="w-4 h-4 text-[#E67E22]" />
           </div>
           <div className="mt-2 flex items-baseline gap-3">
-            <span className="text-2xl font-bold text-slate-900 font-mono-num">
+            <span className="text-xl sm:text-2xl font-bold text-slate-900 font-mono-num">
               {data.kpis.pending_pos} POs
             </span>
-            <span className="text-lg font-semibold text-[#1A3A5C] font-mono-num">
+            <span className="text-base sm:text-lg font-semibold text-[#1A3A5C] font-mono-num">
               {data.kpis.pending_transfers} Transfers
             </span>
           </div>
@@ -307,9 +307,9 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
       </div>
 
       {/* Charts Row: Branch Stock Comparison + Stock Movement Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Branch Valuation & Stock Health */}
-        <div className="bg-white border border-slate-200 rounded-md p-5">
+        <div className="bg-white border border-slate-200 rounded-md p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-semibold text-[#1A3A5C]">
@@ -319,7 +319,7 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
                 Real-time cost value and unit count by branch
               </p>
             </div>
-            <Building2 className="w-4 h-4 text-slate-400" />
+            <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
           </div>
 
           <div className="space-y-4">
@@ -327,11 +327,11 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
               const pct = Math.max(4, Math.round((b.stock_value / maxBranchVal) * 100));
               return (
                 <div key={b.branch_id} className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-800">
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="font-semibold text-slate-800 truncate">
                       {b.branch_name} ({b.branch_code})
                     </span>
-                    <span className="font-mono-num font-semibold text-[#1A3A5C]">
+                    <span className="font-mono-num font-semibold text-[#1A3A5C] shrink-0">
                       {formatUGX(b.stock_value)}
                     </span>
                   </div>
@@ -354,11 +354,11 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
         </div>
 
         {/* Stock Movement Summary */}
-        <div className="bg-white border border-slate-200 rounded-md p-5">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white border border-slate-200 rounded-md p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-2 mb-4">
             <div>
               <h3 className="text-sm font-semibold text-[#1A3A5C]">
-                Stock Movement Summary by Transaction Type
+                Stock Movement Summary by Type
               </h3>
               <p className="text-xs text-slate-500">
                 Inbound vs. outbound unit volumes recorded in ledger
@@ -367,7 +367,7 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
             <button
               type="button"
               onClick={() => onNavigate('inventory')}
-              className="text-xs font-medium text-[#E67E22] hover:underline flex items-center gap-1"
+              className="text-xs font-medium text-[#E67E22] hover:underline flex items-center gap-1 shrink-0 min-h-[32px]"
             >
               <span>Full Ledger</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -411,20 +411,42 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
 
       {/* Incoming Transfers Awaiting Receipt (when present) */}
       {data.awaitingReceiptTransfers.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-md p-5">
-          <div className="flex items-center justify-between mb-3">
+        <div className="bg-white border border-slate-200 rounded-md p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-2 mb-3">
             <h3 className="text-sm font-semibold text-[#1A3A5C]">
-              In-Transit Transfers Awaiting Receipt Confirmation
+              In-Transit Transfers Awaiting Receipt
             </h3>
             <button
               type="button"
               onClick={() => onNavigate('stock-transfers')}
-              className="text-xs font-medium text-[#E67E22] hover:underline"
+              className="text-xs font-medium text-[#E67E22] hover:underline min-h-[32px] shrink-0"
             >
               Open Transfers
             </button>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Mobile cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {data.awaitingReceiptTransfers.map((t) => (
+              <div key={t.id} className="py-3 first:pt-1 last:pb-1 space-y-1.5 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono-num font-semibold text-[#1A3A5C]">
+                    {t.transfer_number}
+                  </span>
+                  <StatusTag status={t.status} />
+                </div>
+                <div className="text-slate-800 font-medium">
+                  {t.source_branch_name} → {t.destination_branch_name}
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  Dispatched {formatDateTime(t.dispatch_date)}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-slate-200 text-slate-500">
@@ -457,7 +479,7 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
 
       {/* Low-Stock & Out-of-Stock Alerts Table */}
       <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div className="px-4 sm:px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-semibold text-[#1A3A5C]">
               Automated Low-Stock & Out-of-Stock Alerts
@@ -466,12 +488,12 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
               Products where current branch quantity is at or below configured reorder level
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {user.role !== 'stock_controller' && (
               <button
                 type="button"
                 onClick={() => onNavigate('reports')}
-                className="px-3 py-1.5 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+                className="px-3 py-2 min-h-[40px] sm:min-h-[32px] text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
               >
                 Full Low-Stock Report
               </button>
@@ -479,7 +501,7 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
             <button
               type="button"
               onClick={() => onNavigate('inventory')}
-              className="px-3 py-1.5 text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47]"
+              className="px-3 py-2 min-h-[40px] sm:min-h-[32px] text-xs font-medium bg-[#1A3A5C] text-white rounded hover:bg-[#142d47]"
             >
               View All Stock
             </button>
@@ -491,75 +513,124 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
             All active products are currently above their reorder levels.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="bg-[#F5F7FA] border-b border-slate-200 text-slate-600">
-                  <th className="py-2.5 px-4 font-semibold">Product</th>
-                  <th className="py-2.5 px-4 font-semibold">Branch</th>
-                  <th className="py-2.5 px-4 font-semibold text-right">Current Qty</th>
-                  <th className="py-2.5 px-4 font-semibold text-right">Reorder Level</th>
-                  <th className="py-2.5 px-4 font-semibold text-right">Shortfall</th>
-                  <th className="py-2.5 px-4 font-semibold text-right">Suggested Reorder</th>
-                  <th className="py-2.5 px-4 font-semibold">Severity</th>
-                  <th className="py-2.5 px-4 font-semibold text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {data.alerts.map((a) => (
-                  <tr key={`${a.product_id}-${a.branch_id}`} className="hover:bg-slate-50">
-                    <td className="py-2.5 px-4">
-                      <div className="font-medium text-slate-900">{a.product_name}</div>
+          <>
+            {/* Mobile Alerts Card List */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {data.alerts.map((a) => (
+                <div key={`m-${a.product_id}-${a.branch_id}`} className="p-4 space-y-2.5 text-xs">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-semibold text-slate-900">{a.product_name}</div>
                       <div className="text-[11px] text-slate-500 font-mono-num">
-                        {a.sku} · {a.category_name}
+                        {a.sku} · {a.branch_name}
                       </div>
-                    </td>
-                    <td className="py-2.5 px-4">{a.branch_name}</td>
-                    <td className="py-2.5 px-4 text-right font-mono-num font-semibold">
-                      {a.quantity_on_hand}
-                    </td>
-                    <td className="py-2.5 px-4 text-right font-mono-num text-slate-600">
-                      {a.reorder_level}
-                    </td>
-                    <td className="py-2.5 px-4 text-right font-mono-num font-semibold text-red-700">
-                      {a.shortfall}
-                    </td>
-                    <td className="py-2.5 px-4 text-right font-mono-num text-[#1A3A5C] font-medium">
-                      {a.suggested_replenishment}
-                    </td>
-                    <td className="py-2.5 px-4">
-                      <StatusTag status={a.status} />
-                    </td>
-                    <td className="py-2.5 px-4 text-right">
-                      {user.role === 'procurement_manager' ? (
-                        <button
-                          type="button"
-                          onClick={() => onNavigate('purchase-orders')}
-                          className="text-xs font-medium text-[#E67E22] hover:underline"
-                        >
-                          Prepare PO
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => onNavigate('stock-intake')}
-                          className="text-xs font-medium text-[#E67E22] hover:underline"
-                        >
-                          Record GRN
-                        </button>
-                      )}
-                    </td>
+                    </div>
+                    <StatusTag status={a.status} />
+                  </div>
+                  <div className="grid grid-cols-4 gap-2 bg-[#F5F7FA] p-2.5 rounded border border-slate-200 text-center">
+                    <div>
+                      <div className="text-[10px] text-slate-500">On Hand</div>
+                      <div className="font-mono-num font-bold text-slate-900">{a.quantity_on_hand}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-slate-500">Reorder</div>
+                      <div className="font-mono-num text-slate-700">{a.reorder_level}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-slate-500">Shortfall</div>
+                      <div className="font-mono-num font-semibold text-red-700">{a.shortfall}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-slate-500">Suggested</div>
+                      <div className="font-mono-num font-semibold text-[#1A3A5C]">
+                        {a.suggested_replenishment}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onNavigate(user.role === 'procurement_manager' ? 'purchase-orders' : 'stock-intake')
+                    }
+                    className="w-full min-h-[40px] px-3 py-2 text-xs font-semibold text-[#E67E22] border border-amber-200 bg-amber-50/40 rounded hover:bg-amber-50"
+                  >
+                    {user.role === 'procurement_manager' ? 'Prepare Purchase Order' : 'Record GRN Intake'}
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Alerts Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-[#F5F7FA] border-b border-slate-200 text-slate-600">
+                    <th className="py-2.5 px-4 font-semibold">Product</th>
+                    <th className="py-2.5 px-4 font-semibold">Branch</th>
+                    <th className="py-2.5 px-4 font-semibold text-right">Current Qty</th>
+                    <th className="py-2.5 px-4 font-semibold text-right">Reorder Level</th>
+                    <th className="py-2.5 px-4 font-semibold text-right">Shortfall</th>
+                    <th className="py-2.5 px-4 font-semibold text-right">Suggested Reorder</th>
+                    <th className="py-2.5 px-4 font-semibold">Severity</th>
+                    <th className="py-2.5 px-4 font-semibold text-right">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {data.alerts.map((a) => (
+                    <tr key={`${a.product_id}-${a.branch_id}`} className="hover:bg-slate-50">
+                      <td className="py-2.5 px-4">
+                        <div className="font-medium text-slate-900">{a.product_name}</div>
+                        <div className="text-[11px] text-slate-500 font-mono-num">
+                          {a.sku} · {a.category_name}
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-4">{a.branch_name}</td>
+                      <td className="py-2.5 px-4 text-right font-mono-num font-semibold">
+                        {a.quantity_on_hand}
+                      </td>
+                      <td className="py-2.5 px-4 text-right font-mono-num text-slate-600">
+                        {a.reorder_level}
+                      </td>
+                      <td className="py-2.5 px-4 text-right font-mono-num font-semibold text-red-700">
+                        {a.shortfall}
+                      </td>
+                      <td className="py-2.5 px-4 text-right font-mono-num text-[#1A3A5C] font-medium">
+                        {a.suggested_replenishment}
+                      </td>
+                      <td className="py-2.5 px-4">
+                        <StatusTag status={a.status} />
+                      </td>
+                      <td className="py-2.5 px-4 text-right">
+                        {user.role === 'procurement_manager' ? (
+                          <button
+                            type="button"
+                            onClick={() => onNavigate('purchase-orders')}
+                            className="text-xs font-medium text-[#E67E22] hover:underline"
+                          >
+                            Prepare PO
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => onNavigate('stock-intake')}
+                            className="text-xs font-medium text-[#E67E22] hover:underline"
+                          >
+                            Record GRN
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
       {/* Recent Inventory Ledger Activity */}
       <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="px-4 sm:px-5 py-4 border-b border-slate-200 flex items-center justify-between gap-2">
           <div>
             <h3 className="text-sm font-semibold text-[#1A3A5C]">Recent Inventory Transactions</h3>
             <p className="text-xs text-slate-500">Latest immutable stock ledger entries</p>
@@ -567,12 +638,48 @@ export function DashboardPage({ user, onNavigate }: DashboardPageProps) {
           <button
             type="button"
             onClick={() => onNavigate('inventory')}
-            className="text-xs font-medium text-[#1A3A5C] hover:underline"
+            className="text-xs font-medium text-[#1A3A5C] hover:underline shrink-0 min-h-[32px]"
           >
             View Ledger
           </button>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Mobile Recent Activity Cards */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {data.recentActivity.map((tx) => (
+            <div key={`m-tx-${tx.id}`} className="p-4 space-y-1.5 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-mono-num font-semibold text-[#1A3A5C]">{tx.reference_number}</span>
+                <StatusTag status={tx.transaction_type} />
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-medium text-slate-900 truncate">{tx.product_name}</div>
+                  <div className="text-[11px] text-slate-500 font-mono-num">
+                    {tx.sku} · {tx.branch_name}
+                  </div>
+                </div>
+                <div className="text-right font-mono-num shrink-0">
+                  <div className="font-bold">
+                    {tx.quantity_added > 0 ? (
+                      <span className="text-emerald-700">+{tx.quantity_added}</span>
+                    ) : (
+                      <span className="text-red-700">-{tx.quantity_removed}</span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-slate-500">Bal: {tx.balance_after}</div>
+                </div>
+              </div>
+              <div className="text-[11px] text-slate-500 flex items-center justify-between">
+                <span>{tx.user_name}</span>
+                <span>{formatDateTime(tx.created_at)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Recent Activity Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-[#F5F7FA] border-b border-slate-200 text-slate-600">

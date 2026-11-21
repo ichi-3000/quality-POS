@@ -158,21 +158,21 @@ export function UsersPage() {
       )}
 
       <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5 flex-1">
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5 flex-1">
+          <div className="relative sm:col-span-2 lg:flex-1 lg:min-w-[200px] lg:max-w-xs">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search name, username, email..."
-              className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded"
+              className="w-full pl-9 pr-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded"
             />
           </div>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
           >
             <option value="">All Roles</option>
             {roles.map((r) => (
@@ -184,7 +184,7 @@ export function UsersPage() {
           <select
             value={branchFilter}
             onChange={(e) => setBranchFilter(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-slate-300 rounded bg-white"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[36px] text-sm border border-slate-300 rounded bg-white"
           >
             <option value="">All Branches</option>
             {branches.map((b) => (
@@ -198,7 +198,7 @@ export function UsersPage() {
         <button
           type="button"
           onClick={openAdd}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
+          className="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] lg:min-h-[38px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Add Staff User</span>
@@ -206,7 +206,68 @@ export function UsersPage() {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile Cards */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {users.map((u) => (
+            <div key={u.id} className="p-3.5 space-y-2.5 text-xs">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-semibold text-sm text-slate-900">{u.full_name}</div>
+                  <div className="font-mono-num text-[#1A3A5C] font-medium">@{u.username}</div>
+                </div>
+                <StatusTag status={u.status} />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                <div>
+                  <div className="text-[11px] text-slate-500">Role</div>
+                  <div className="font-medium text-slate-800">{u.role_name}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-slate-500">Branch</div>
+                  <div className="font-medium text-slate-800">
+                    {u.branch_name || 'All Branches (HQ)'}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-[11px] text-slate-500">Email / Phone</div>
+                  <div className="text-slate-700 break-all">{u.email}</div>
+                  {u.phone && <div className="text-slate-500">{u.phone}</div>}
+                </div>
+                <div className="col-span-2">
+                  <div className="text-[11px] text-slate-500">Last Login</div>
+                  <div className="text-slate-600">{formatDateTime(u.last_login_at)}</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => openEdit(u)}
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-medium text-[#E67E22] border border-slate-200 rounded hover:bg-slate-50"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                  <span>Edit User</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPwUser(u);
+                    setNewPassword('');
+                    setPwOpen(true);
+                  }}
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-medium text-[#1A3A5C] border border-slate-200 rounded hover:bg-slate-50"
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Reset PW</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-[#1A3A5C] text-white">
@@ -376,7 +437,7 @@ export function UsersPage() {
               <select
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
-                className="px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full sm:w-auto px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -384,17 +445,17 @@ export function UsersPage() {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setFormOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-slate-300 rounded text-slate-700"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium border border-slate-300 rounded text-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
             >
               Save User
             </button>
@@ -420,20 +481,20 @@ export function UsersPage() {
               minLength={8}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded"
+              className="w-full px-3 py-2 min-h-[44px] text-sm border border-slate-300 rounded"
             />
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={() => setPwOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-slate-300 rounded text-slate-700"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium border border-slate-300 rounded text-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#1A3A5C] rounded"
+              className="px-4 py-2 min-h-[44px] text-sm font-medium text-white bg-[#1A3A5C] rounded"
             >
               Reset Password
             </button>

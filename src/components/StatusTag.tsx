@@ -70,16 +70,16 @@ export function AlertBanner({
   }[type];
 
   return (
-    <div className={`flex items-center justify-between gap-3 px-4 py-3 rounded border text-sm ${styles}`}>
-      <div className="flex items-center gap-2.5">
-        <Icon className="w-4 h-4 shrink-0" />
-        <span>{message}</span>
+    <div className={`flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 px-3.5 sm:px-4 py-3 rounded border text-sm ${styles}`}>
+      <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+        <Icon className="w-4 h-4 shrink-0 mt-0.5 sm:mt-0" />
+        <span className="break-words">{message}</span>
       </div>
       {onClose && (
         <button
           type="button"
           onClick={onClose}
-          className="text-xs font-medium underline hover:opacity-80 shrink-0"
+          className="text-xs font-medium underline hover:opacity-80 shrink-0 min-h-[36px] px-1"
         >
           Dismiss
         </button>
@@ -100,14 +100,14 @@ export function EmptyState({
   onAction?: () => void;
 }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-md p-10 text-center">
+    <div className="bg-white border border-slate-200 rounded-md p-6 sm:p-10 text-center">
       <h3 className="text-base font-semibold text-slate-900">{title}</h3>
       <p className="mt-1.5 text-sm text-slate-500 max-w-md mx-auto">{description}</p>
       {actionLabel && onAction && (
         <button
           type="button"
           onClick={onAction}
-          className="mt-4 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded transition-colors"
+          className="mt-4 px-4 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded transition-colors"
         >
           {actionLabel}
         </button>
@@ -133,24 +133,24 @@ export function Modal({
 }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 p-0 sm:p-4 overflow-y-auto">
       <div
-        className={`w-full ${maxWidth} bg-white border border-slate-200 rounded-md shadow-lg my-8 overflow-hidden`}
+        className={`w-full ${maxWidth} bg-white border border-slate-200 rounded-t-xl sm:rounded-md shadow-lg sm:my-8 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]`}
       >
-        <div className="flex items-start justify-between gap-4 px-6 py-4 bg-[#1A3A5C] text-white">
-          <div>
-            <h2 className="text-base font-semibold">{title}</h2>
-            {subtitle && <p className="text-xs text-slate-200 mt-0.5">{subtitle}</p>}
+        <div className="flex items-start justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 bg-[#1A3A5C] text-white shrink-0">
+          <div className="min-w-0">
+            <h2 className="text-sm sm:text-base font-semibold leading-snug">{title}</h2>
+            {subtitle && <p className="text-xs text-slate-200 mt-0.5 break-words">{subtitle}</p>}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-200 hover:text-white text-sm font-medium px-2 py-1 rounded hover:bg-white/10"
+            className="text-slate-200 hover:text-white text-xs sm:text-sm font-medium px-3 min-h-[44px] sm:min-h-[36px] rounded hover:bg-white/10 shrink-0 -mr-1"
           >
             Close
           </button>
         </div>
-        <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1">{children}</div>
       </div>
     </div>
   );

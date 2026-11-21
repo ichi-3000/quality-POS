@@ -70,7 +70,7 @@ export function CategoriesPage() {
         <AlertBanner type={banner.type} message={banner.text} onClose={() => setBanner(null)} />
       )}
 
-      <div className="bg-white border border-slate-200 rounded-md p-4 flex items-center justify-between">
+      <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[#1A3A5C]">Product Categories</h2>
           <p className="text-xs text-slate-500">
@@ -80,7 +80,7 @@ export function CategoriesPage() {
         <button
           type="button"
           onClick={openAdd}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Add Category</span>
@@ -88,7 +88,37 @@ export function CategoriesPage() {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile Category Cards */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {categories.map((c) => (
+            <div key={`m-cat-${c.id}`} className="p-4 space-y-2.5 text-xs">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-mono-num font-semibold text-[#1A3A5C]">{c.code}</div>
+                  <div className="text-sm font-semibold text-slate-900 mt-0.5">{c.name}</div>
+                  {c.description && <p className="text-slate-600 mt-1">{c.description}</p>}
+                </div>
+                <StatusTag status={c.status} />
+              </div>
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <span className="text-slate-600 font-mono-num font-medium">
+                  {c.product_count ?? 0} product(s)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => openEdit(c)}
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[40px] text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-[#1A3A5C] text-white">
@@ -143,7 +173,7 @@ export function CategoriesPage() {
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+              className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
             />
           </div>
           <div>
@@ -155,7 +185,7 @@ export function CategoriesPage() {
               required
               value={form.code}
               onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
+              className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
             />
           </div>
           <div>
@@ -173,24 +203,24 @@ export function CategoriesPage() {
               <select
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded bg-white"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded bg-white"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
           )}
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-slate-300 rounded text-slate-700"
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium border border-slate-300 rounded text-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
             >
               Save Category
             </button>

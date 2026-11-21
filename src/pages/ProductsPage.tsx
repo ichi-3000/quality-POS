@@ -223,8 +223,8 @@ export function ProductsPage({ user }: { user: User }) {
 
       {/* Toolbar */}
       <div className="bg-white border border-slate-200 rounded-md p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5 flex-1">
-          <div className="relative flex-1 min-w-[220px] max-w-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5 flex-1">
+          <div className="relative sm:col-span-2 lg:flex-1 lg:min-w-[220px] lg:max-w-sm">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -234,7 +234,7 @@ export function ProductsPage({ user }: { user: User }) {
                 setSearch(e.target.value);
               }}
               placeholder="Search name, SKU, barcode..."
-              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+              className="w-full pl-9 pr-3 py-2 min-h-[44px] lg:min-h-[38px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
             />
           </div>
 
@@ -244,7 +244,7 @@ export function ProductsPage({ user }: { user: User }) {
               setPage(1);
               setCategoryId(e.target.value);
             }}
-            className="px-3 py-2 text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[38px] text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
           >
             <option value="">All Categories</option>
             {categories.map((c) => (
@@ -260,7 +260,7 @@ export function ProductsPage({ user }: { user: User }) {
               setPage(1);
               setStatusFilter(e.target.value);
             }}
-            className="px-3 py-2 text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
+            className="w-full lg:w-auto px-3 py-2 min-h-[44px] lg:min-h-[38px] text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -276,7 +276,7 @@ export function ProductsPage({ user }: { user: User }) {
                 setStatusFilter('');
                 setPage(1);
               }}
-              className="px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+              className="w-full sm:w-auto px-3 py-2 min-h-[44px] lg:min-h-[38px] text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
             >
               Clear Filters
             </button>
@@ -287,7 +287,7 @@ export function ProductsPage({ user }: { user: User }) {
           <button
             type="button"
             onClick={openAdd}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
+            className="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Add Product</span>
@@ -295,7 +295,7 @@ export function ProductsPage({ user }: { user: User }) {
         )}
       </div>
 
-      {/* Catalogue Table */}
+      {/* Catalogue Table / Mobile Cards */}
       {!loading && products.length === 0 ? (
         <EmptyState
           title="No products match your filters"
@@ -305,7 +305,92 @@ export function ProductsPage({ user }: { user: User }) {
         />
       ) : (
         <div className="bg-white border border-slate-200 rounded-md overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Product Cards */}
+          <div className="md:hidden divide-y divide-slate-100">
+            {products.map((p) => (
+              <div key={`m-prod-${p.id}`} className="p-4 space-y-3 text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-mono-num text-[11px] font-semibold text-[#1A3A5C]">
+                      {p.sku} · {p.category_name}
+                    </div>
+                    <div className="text-sm font-semibold text-slate-900 mt-0.5">{p.name}</div>
+                    <div className="text-[11px] text-slate-500">
+                      {p.unit_of_measure}
+                      {p.barcode ? ` · ${p.barcode}` : ''}
+                    </div>
+                  </div>
+                  <StatusTag status={p.status} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 bg-[#F5F7FA] p-2.5 rounded border border-slate-200">
+                  <div>
+                    <div className="text-[10px] text-slate-500">Unit Cost</div>
+                    <div className="font-mono-num font-medium">{formatUGX(p.unit_cost)}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-500">Selling Price</div>
+                    <div className="font-mono-num font-semibold text-slate-900">
+                      {formatUGX(p.selling_price)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-500">Total Stock (Min {p.reorder_level})</div>
+                    <div className="font-mono-num font-bold text-slate-900">{p.total_stock ?? 0}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-500">Stock Value</div>
+                    <div className="font-mono-num font-semibold text-[#1A3A5C]">
+                      {formatUGX(p.total_stock_value)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openDetail(p.id)}
+                    className="flex-1 min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50 text-[#1A3A5C]"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span>Details</span>
+                  </button>
+                  {canManage && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => openEdit(p)}
+                        className="flex-1 min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50 text-slate-800"
+                      >
+                        <Pencil className="w-4 h-4" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => toggleStatus(p)}
+                        className="min-h-[44px] px-3 py-2 text-xs font-medium border border-slate-300 rounded hover:bg-slate-50"
+                      >
+                        {p.status === 'active' ? 'Deactivate' : 'Activate'}
+                      </button>
+                    </>
+                  )}
+                  {user.role === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(p)}
+                      className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center border border-red-200 text-red-700 rounded hover:bg-red-50"
+                      title="Delete (only if unused)"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#1A3A5C] text-white">
@@ -399,7 +484,7 @@ export function ProductsPage({ user }: { user: User }) {
           </div>
 
           {/* Pagination */}
-          <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+          <div className="px-4 py-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
             <span>
               Showing page {page} of {totalPages} ({totalCount} products)
             </span>
@@ -408,7 +493,7 @@ export function ProductsPage({ user }: { user: User }) {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50 hover:bg-slate-50"
+                className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-[32px] border border-slate-300 rounded disabled:opacity-50 hover:bg-slate-50"
               >
                 Previous
               </button>
@@ -416,7 +501,7 @@ export function ProductsPage({ user }: { user: User }) {
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="px-3 py-1 border border-slate-300 rounded disabled:opacity-50 hover:bg-slate-50"
+                className="flex-1 sm:flex-none px-3 py-2 sm:py-1 min-h-[40px] sm:min-h-[32px] border border-slate-300 rounded disabled:opacity-50 hover:bg-slate-50"
               >
                 Next
               </button>
@@ -444,7 +529,7 @@ export function ProductsPage({ user }: { user: User }) {
                 value={form.sku}
                 onChange={(e) => setForm({ ...form, sku: e.target.value })}
                 placeholder="e.g. QS-BEV-010"
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
               />
             </div>
             <div>
@@ -454,7 +539,7 @@ export function ProductsPage({ user }: { user: User }) {
                 value={form.barcode}
                 onChange={(e) => setForm({ ...form, barcode: e.target.value })}
                 placeholder="Optional EAN/UPC"
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
               />
             </div>
           </div>
@@ -467,7 +552,7 @@ export function ProductsPage({ user }: { user: User }) {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="e.g. Rwenzori Mineral Water 1.5L"
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+              className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
             />
           </div>
 
@@ -478,7 +563,7 @@ export function ProductsPage({ user }: { user: User }) {
                 required
                 value={form.category_id}
                 onChange={(e) => setForm({ ...form, category_id: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
               >
                 <option value="">Select category</option>
                 {categories.map((c) => (
@@ -498,7 +583,7 @@ export function ProductsPage({ user }: { user: User }) {
                 value={form.unit_of_measure}
                 onChange={(e) => setForm({ ...form, unit_of_measure: e.target.value })}
                 placeholder="Piece, Pack, Carton, Kg"
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded focus:outline-none focus:border-[#1A3A5C]"
               />
             </div>
             <div>
@@ -508,7 +593,7 @@ export function ProductsPage({ user }: { user: User }) {
               <select
                 value={form.preferred_supplier_id}
                 onChange={(e) => setForm({ ...form, preferred_supplier_id: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded bg-white focus:outline-none focus:border-[#1A3A5C]"
               >
                 <option value="">None</option>
                 {suppliers.map((s) => (
@@ -531,7 +616,7 @@ export function ProductsPage({ user }: { user: User }) {
                 required
                 value={form.unit_cost}
                 onChange={(e) => setForm({ ...form, unit_cost: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
               />
             </div>
             <div>
@@ -544,7 +629,7 @@ export function ProductsPage({ user }: { user: User }) {
                 required
                 value={form.selling_price}
                 onChange={(e) => setForm({ ...form, selling_price: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
               />
             </div>
             <div>
@@ -557,7 +642,7 @@ export function ProductsPage({ user }: { user: User }) {
                 required
                 value={form.reorder_level}
                 onChange={(e) => setForm({ ...form, reorder_level: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
+                className="w-full px-3 py-2.5 min-h-[44px] text-sm border border-slate-300 rounded font-mono-num focus:outline-none focus:border-[#1A3A5C]"
               />
             </div>
           </div>
@@ -572,37 +657,37 @@ export function ProductsPage({ user }: { user: User }) {
             />
           </div>
 
-          <div className="flex items-center justify-between pt-1">
-            <label className="inline-flex items-center gap-2 text-xs text-slate-700">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+            <label className="inline-flex items-center gap-2 text-xs text-slate-700 min-h-[36px]">
               <input
                 type="checkbox"
                 checked={form.expiry_tracking}
                 onChange={(e) => setForm({ ...form, expiry_tracking: e.target.checked })}
-                className="rounded border-slate-300"
+                className="rounded border-slate-300 w-4 h-4"
               />
               <span>Track expiry dates for this product</span>
             </label>
             <select
               value={form.status}
               onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
-              className="px-3 py-1.5 text-xs border border-slate-300 rounded bg-white"
+              className="w-full sm:w-auto px-3 py-2 min-h-[44px] sm:min-h-[36px] text-sm sm:text-xs border border-slate-300 rounded bg-white"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setFormOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-slate-300 rounded text-slate-700 hover:bg-slate-50"
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium border border-slate-300 rounded text-slate-700 hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
+              className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#E67E22] hover:bg-[#cf6d17] rounded"
             >
               {editing ? 'Save Changes' : 'Create Product'}
             </button>
@@ -653,34 +738,36 @@ export function ProductsPage({ user }: { user: User }) {
 
             <div>
               <h4 className="text-xs font-semibold text-[#1A3A5C] mb-2">Stock by Branch</h4>
-              <table className="w-full text-left border-collapse text-xs border border-slate-200">
-                <thead>
-                  <tr className="bg-[#F5F7FA] border-b border-slate-200 text-slate-600">
-                    <th className="py-2 px-3">Branch</th>
-                    <th className="py-2 px-3 text-right">Qty on Hand</th>
-                    <th className="py-2 px-3 text-right">Valuation</th>
-                    <th className="py-2 px-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {detailData.branchStocks.map((bs) => (
-                    <tr key={bs.branch_id}>
-                      <td className="py-2 px-3 font-medium">
-                        {bs.branch_name} ({bs.branch_code})
-                      </td>
-                      <td className="py-2 px-3 text-right font-mono-num font-semibold">
-                        {bs.quantity_on_hand}
-                      </td>
-                      <td className="py-2 px-3 text-right font-mono-num">
-                        {formatUGX(bs.stock_value)}
-                      </td>
-                      <td className="py-2 px-3">
-                        <StatusTag status={bs.status} />
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs border border-slate-200">
+                  <thead>
+                    <tr className="bg-[#F5F7FA] border-b border-slate-200 text-slate-600">
+                      <th className="py-2 px-3">Branch</th>
+                      <th className="py-2 px-3 text-right">Qty on Hand</th>
+                      <th className="py-2 px-3 text-right">Valuation</th>
+                      <th className="py-2 px-3">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {detailData.branchStocks.map((bs) => (
+                      <tr key={bs.branch_id}>
+                        <td className="py-2 px-3 font-medium whitespace-nowrap">
+                          {bs.branch_name} ({bs.branch_code})
+                        </td>
+                        <td className="py-2 px-3 text-right font-mono-num font-semibold">
+                          {bs.quantity_on_hand}
+                        </td>
+                        <td className="py-2 px-3 text-right font-mono-num whitespace-nowrap">
+                          {formatUGX(bs.stock_value)}
+                        </td>
+                        <td className="py-2 px-3">
+                          <StatusTag status={bs.status} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             <div>
@@ -688,34 +775,36 @@ export function ProductsPage({ user }: { user: User }) {
               {detailData.movementHistory.length === 0 ? (
                 <p className="text-xs text-slate-500">No inventory movements recorded yet.</p>
               ) : (
-                <table className="w-full text-left border-collapse text-xs border border-slate-200">
-                  <thead>
-                    <tr className="bg-[#F5F7FA] border-b border-slate-200 text-slate-600">
-                      <th className="py-2 px-3">Reference</th>
-                      <th className="py-2 px-3">Branch</th>
-                      <th className="py-2 px-3">Type</th>
-                      <th className="py-2 px-3 text-right">Change</th>
-                      <th className="py-2 px-3 text-right">Balance</th>
-                      <th className="py-2 px-3">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {detailData.movementHistory.map((m) => (
-                      <tr key={m.id}>
-                        <td className="py-2 px-3 font-mono-num">{m.reference_number}</td>
-                        <td className="py-2 px-3">{m.branch_name}</td>
-                        <td className="py-2 px-3">
-                          <StatusTag status={m.transaction_type} />
-                        </td>
-                        <td className="py-2 px-3 text-right font-mono-num font-semibold">
-                          {m.quantity_added > 0 ? `+${m.quantity_added}` : `-${m.quantity_removed}`}
-                        </td>
-                        <td className="py-2 px-3 text-right font-mono-num">{m.balance_after}</td>
-                        <td className="py-2 px-3 text-slate-500">{formatDateTime(m.created_at)}</td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs border border-slate-200">
+                    <thead>
+                      <tr className="bg-[#F5F7FA] border-b border-slate-200 text-slate-600">
+                        <th className="py-2 px-3">Reference</th>
+                        <th className="py-2 px-3">Branch</th>
+                        <th className="py-2 px-3">Type</th>
+                        <th className="py-2 px-3 text-right">Change</th>
+                        <th className="py-2 px-3 text-right">Balance</th>
+                        <th className="py-2 px-3">Date</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {detailData.movementHistory.map((m) => (
+                        <tr key={m.id}>
+                          <td className="py-2 px-3 font-mono-num whitespace-nowrap">{m.reference_number}</td>
+                          <td className="py-2 px-3 whitespace-nowrap">{m.branch_name}</td>
+                          <td className="py-2 px-3">
+                            <StatusTag status={m.transaction_type} />
+                          </td>
+                          <td className="py-2 px-3 text-right font-mono-num font-semibold">
+                            {m.quantity_added > 0 ? `+${m.quantity_added}` : `-${m.quantity_removed}`}
+                          </td>
+                          <td className="py-2 px-3 text-right font-mono-num">{m.balance_after}</td>
+                          <td className="py-2 px-3 text-slate-500 whitespace-nowrap">{formatDateTime(m.created_at)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>
