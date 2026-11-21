@@ -1,0 +1,1703 @@
+# FULL-STACK WEB APPLICATION DEVELOPMENT PROMPT
+## Quality Supermarkets Uganda Limited – Inventory Management System (QS-IMS)
+
+Act as a senior full-stack software engineer, system architect, database engineer, UI/UX designer, security engineer, and QA engineer.
+
+Your task is to **design, develop, and implement a complete, production-quality, professional web-based Inventory Management System (QS-IMS)** for Quality Supermarkets Uganda Limited, based on the requirements, workflows, scope, and system specifications contained in the project proposal and final report.
+
+This is not a mockup, static website, or frontend-only dashboard. Build a fully functional application with a working database, authentication, permissions, business logic, stock calculations, reports, and complete CRUD operations.
+
+---
+
+# 1. PROJECT BACKGROUND
+
+Quality Supermarkets Uganda Limited operates three supermarket branches in Kampala:
+
+1. Ntinda – Head Office
+2. Najjera Branch
+3. Kyaliwajjala Branch
+
+The supermarket currently faces inventory challenges associated with manual stock cards, spreadsheets, paper-based Goods Received Notes, manual stock counts, and informal communication regarding stock transfers.
+
+These problems include:
+
+- Frequent stock-outs of fast-moving products.
+- Overstocking of slow-moving products.
+- Inaccurate stock records.
+- Delayed stock updates.
+- Difficulty tracking inventory across branches.
+- Poor visibility of inventory valuation.
+- Informal and poorly documented branch transfers.
+- Difficulty reconciling received goods with purchase orders.
+- Time-consuming manual report preparation.
+- Limited visibility for procurement and management.
+- Difficulty identifying expired, damaged, or missing stock.
+- Lack of automated reorder alerts.
+
+The purpose of QS-IMS is to centralize inventory operations and provide accurate, timely, and reliable inventory information across all three branches.
+
+The application must be suitable for real supermarket operations and should be designed to be easily understood by branch managers, stock controllers, procurement personnel, administrators, and management.
+
+---
+
+# 2. MAIN PROJECT OBJECTIVE
+
+Develop a web-based Inventory Management System that improves:
+
+- Inventory accuracy.
+- Stock control.
+- Inventory visibility across branches.
+- Procurement planning.
+- Stock transfer accountability.
+- Inventory valuation.
+- Operational efficiency.
+- Management decision-making.
+- Accountability and traceability.
+
+The system must provide a centralized inventory database while maintaining branch-level operational access restrictions.
+
+---
+
+# 3. TECHNOLOGY STACK
+
+Use the following technologies:
+
+## Backend
+- PHP 8.2 or newer.
+- Laravel framework, using a stable version compatible with the installed PHP environment.
+- Laravel MVC architecture.
+- RESTful principles where appropriate.
+- Server-side validation.
+- Laravel authentication and authorization mechanisms.
+
+## Database
+- MySQL 8.0 or newer.
+- Proper relational database structure.
+- Foreign keys.
+- Unique constraints.
+- Indexes.
+- Transactions for critical stock operations.
+- Migration files.
+- Seeders for demonstration data.
+
+## Frontend
+- Blade templates.
+- HTML5.
+- CSS3.
+- JavaScript.
+- Bootstrap 5.
+- Bootstrap Icons or Font Awesome.
+- Responsive design.
+
+Use Laravel's native capabilities where appropriate instead of unnecessarily introducing multiple frameworks.
+
+Do not build the system as a collection of disconnected pages.
+
+---
+
+# 4. UI/UX DESIGN REQUIREMENTS
+
+Design the application to look like a modern commercial inventory management system used by an established supermarket chain.
+
+The interface must be clean, polished, professional, responsive, and practical.
+
+## Design direction
+
+Use a corporate retail-management design system.
+
+### Brand colours
+- Primary Navy: #1A3A5C
+- Primary Orange: #E67E22
+- White: #FFFFFF
+- Light background: #F5F7FA
+- Secondary text: neutral grey
+- Success: green
+- Warning: amber
+- Critical alerts: red
+
+Use navy for navigation, important headers, and professional structure.
+
+Use orange for primary actions, selected highlights, and key visual accents.
+
+Avoid:
+- Excessive gradients.
+- Excessive rounded cards.
+- Overly bright backgrounds.
+- Unnecessary animations.
+- Huge empty dashboard sections.
+- Decorative components that reduce usability.
+- Generic AI-generated dashboard appearance.
+- Excessive icons without meaning.
+
+## Layout
+
+Implement a responsive admin dashboard layout with:
+
+### Sidebar
+- QS-IMS logo/branding.
+- Dashboard.
+- Products.
+- Categories.
+- Inventory / Stock Levels.
+- Stock Intake / GRN.
+- Stock Issues.
+- Stock Transfers.
+- Suppliers.
+- Purchase Orders.
+- Reports.
+- User Management.
+- Audit Logs.
+- Settings.
+- Logout.
+
+The sidebar menu must change based on the authenticated user's permissions.
+
+### Top navigation bar
+- Page title or breadcrumbs.
+- Search functionality.
+- Notifications.
+- Current branch indicator.
+- Logged-in user's name.
+- User role.
+- Profile menu.
+
+### Main content area
+- Consistent spacing.
+- Page-specific content.
+- Responsive tables.
+- Search and filtering.
+- Pagination.
+- Clear form layouts.
+- Empty states.
+- Loading feedback where needed.
+- Success and error notifications.
+
+## Responsive design
+
+The application must work properly on:
+
+- Desktop computers.
+- Laptops.
+- Tablets.
+- Mobile phones.
+
+The sidebar should collapse appropriately on smaller screens.
+
+Tables should be usable on smaller screens, including horizontal scrolling where necessary.
+
+---
+
+# 5. USER ROLES AND ACCESS CONTROL
+
+Implement four roles with proper Role-Based Access Control (RBAC).
+
+## A. Administrator
+
+The Administrator has full system privileges.
+
+Permissions:
+
+- View all branches.
+- Manage all products.
+- Manage categories.
+- Manage suppliers.
+- Manage inventory.
+- View stock intake.
+- View stock issues.
+- Manage stock transfers.
+- Manage purchase orders.
+- View all reports.
+- Manage users.
+- Assign roles.
+- Assign users to branches.
+- Configure system settings.
+- View audit logs.
+- View stock valuation.
+- Access all system-level information.
+
+## B. Procurement Manager
+
+The Procurement Manager is based at Head Office.
+
+Permissions:
+
+- View inventory across all three branches.
+- View consolidated stock levels.
+- View low-stock reports across branches.
+- Manage suppliers.
+- Create purchase orders.
+- Edit draft purchase orders.
+- Track purchase order statuses.
+- Review incoming stock.
+- View procurement reports.
+- View inventory valuation reports.
+- Access cross-branch inventory data.
+- Monitor purchasing activity.
+
+Restrict this role from unnecessary administrator-only configuration and account-management operations.
+
+## C. Branch Manager
+
+Branch Managers must only access information relevant to their assigned branch, except where explicitly authorized.
+
+Permissions:
+
+- View stock at their branch.
+- View branch dashboard.
+- View branch low-stock products.
+- Record or supervise stock intake.
+- View stock issues.
+- Review branch stock transfers.
+- Request transfers from other branches.
+- Approve or manage branch operations according to configured workflow.
+- View branch inventory reports.
+- View stock valuation where permitted.
+- Monitor branch stock activity.
+- View branch-level audit records where permitted.
+
+Branch Managers must not access another branch's confidential operational information unless explicitly authorized.
+
+## D. Stock Controller
+
+Stock Controllers must be assigned to a specific branch.
+
+Permissions:
+
+- View stock at their branch.
+- Record Goods Received Notes.
+- Record stock issues.
+- View product details.
+- View stock levels.
+- View stock movement history relevant to their branch.
+- Participate in stock transfer receiving workflows when authorized.
+
+Stock Controllers must not:
+
+- Manage users.
+- Change roles.
+- Access system settings.
+- View unauthorized branch data.
+- Edit stock directly without a recorded transaction.
+- Alter historical inventory transactions.
+
+## Access control requirements
+
+- Enforce permissions on the backend, not just by hiding buttons.
+- Automatically scope branch-level data to the authenticated user's branch.
+- Prevent users from manipulating branch IDs in URLs, forms, or requests.
+- Use middleware, policies, gates, or equivalent Laravel authorization mechanisms.
+- Prevent unauthorized direct route access.
+- Record important permission-related events.
+
+---
+
+# 6. BRANCH MANAGEMENT
+
+Create a branch management structure for:
+
+### Ntinda – Head Office
+Branch code: NTINDA
+
+### Najjera
+Branch code: NAJJERA
+
+### Kyaliwajjala
+Branch code: KYALI
+
+Each branch must have:
+
+- Branch name.
+- Branch code.
+- Location.
+- Contact details.
+- Status.
+- Branch manager.
+- Date created.
+
+Products must have stock records for each branch.
+
+A newly created product should automatically initialize stock records for all three branches with a default quantity of zero.
+
+The system must support consolidated inventory reporting while preserving branch-specific stock records.
+
+---
+
+# 7. PRODUCT CATALOGUE MODULE
+
+Create a complete product management module.
+
+Each product should contain:
+
+- Product ID.
+- Product name.
+- Unique product code/SKU.
+- Barcode, if available.
+- Category.
+- Description.
+- Unit of measurement.
+- Unit cost.
+- Selling price.
+- Reorder level.
+- Preferred supplier, if applicable.
+- Expiry tracking configuration.
+- Product status.
+- Date created.
+- Date updated.
+
+## Product management functionality
+
+- Add products.
+- Edit products.
+- View product details.
+- Search products.
+- Filter products.
+- Paginate products.
+- Activate/deactivate products.
+- Prevent duplicate product codes.
+- Assign categories.
+- View stock by branch.
+- View stock value.
+- View movement history.
+
+Do not allow deletion of products that have already been used in inventory transactions.
+
+Use archive/deactivate functionality instead.
+
+## Product categories
+
+Allow administrators to create and manage categories such as:
+
+- Beverages.
+- Cereals.
+- Dairy.
+- Cleaning Supplies.
+- Confectionery.
+- Household Items.
+- Personal Care.
+- Other categories.
+
+Categories must be configurable.
+
+---
+
+# 8. INVENTORY AND STOCK LEVEL MANAGEMENT
+
+Create a central stock management module.
+
+Track stock quantities separately for each branch and each product.
+
+The stock table should contain:
+
+- Product.
+- Branch.
+- Quantity on hand.
+- Reorder level.
+- Stock status.
+- Unit cost.
+- Stock value.
+- Last stock movement.
+- Last updated.
+
+## Stock status indicators
+
+Automatically determine:
+
+- In Stock.
+- Low Stock.
+- Out of Stock.
+
+### Logic
+
+If stock quantity is zero:
+
+Status = Out of Stock.
+
+If stock quantity is greater than zero but less than or equal to the reorder level:
+
+Status = Low Stock.
+
+Otherwise:
+
+Status = In Stock.
+
+Provide visual status indicators.
+
+## Inventory features
+
+- Search by product name or code.
+- Filter by branch.
+- Filter by category.
+- Filter by stock status.
+- Sort stock quantities.
+- View stock value.
+- View stock history.
+- View stock movement details.
+- Export reports where applicable.
+
+## Important
+
+Do not permit users to manually overwrite stock quantities without an authorized adjustment transaction.
+
+All stock changes must be traceable.
+
+---
+
+# 9. STOCK INTAKE – GOODS RECEIVED NOTE (GRN)
+
+Develop a complete stock intake module.
+
+Stock intake represents goods physically received by a branch.
+
+## GRN functionality
+
+- Generate a unique GRN number automatically.
+- Select branch.
+- Select supplier.
+- Reference purchase order if applicable.
+- Record delivery note number.
+- Record date received.
+- Add multiple products.
+- Enter quantities received.
+- Automatically fetch product unit cost.
+- Allow authorized cost adjustments when necessary.
+- Calculate line totals automatically.
+- Calculate grand total automatically.
+- Record receiving staff.
+- Add remarks.
+- Save GRN.
+
+## GRN workflow
+
+1. User opens Stock Intake.
+2. User creates a new GRN.
+3. User selects supplier.
+4. User selects branch, subject to permission.
+5. User adds products.
+6. Product cost is automatically populated.
+7. User enters quantities received.
+8. The system calculates totals.
+9. User reviews and confirms.
+10. User saves the GRN.
+11. Stock is increased automatically.
+12. The transaction is recorded in the stock ledger.
+13. Audit log is created.
+
+The stock update must happen only once.
+
+Prevent accidental duplicate submission.
+
+Use database transactions.
+
+---
+
+# 10. STOCK ISSUES
+
+Develop a Stock Issue module.
+
+Stock issue transactions must be classified into:
+
+- Sale.
+- Transfer.
+- Damage.
+- Expiry.
+- Adjustment.
+
+Each stock issue must contain:
+
+- Issue number.
+- Branch.
+- Product.
+- Quantity.
+- Issue type.
+- Reason.
+- Reference number, if applicable.
+- Date.
+- Issued by.
+- Notes.
+
+## Stock issue rules
+
+- Stock cannot be issued if insufficient quantity exists.
+- Quantity must be positive.
+- The issue must be recorded in the stock ledger.
+- Stock must decrease automatically.
+- The issue must be traceable.
+- Branch restrictions must be enforced.
+- Users must not be able to alter stock quantities without recording an issue.
+
+## Issue categories
+
+### Sale
+Stock leaving inventory due to sales.
+
+### Transfer
+Stock leaving one branch for another branch.
+
+Transfer issues must be connected to the stock transfer workflow.
+
+### Damage
+Products damaged and no longer suitable for sale.
+
+### Expiry
+Expired products removed from available inventory.
+
+### Adjustment
+Authorized correction of stock discrepancies.
+
+Adjustments must require a reason and must be auditable.
+
+---
+
+# 11. INTER-BRANCH STOCK TRANSFERS
+
+Create a fully functional inter-branch transfer module.
+
+The system must support stock movement between:
+
+- Ntinda.
+- Najjera.
+- Kyaliwajjala.
+
+## Transfer workflow
+
+A stock transfer should contain:
+
+- Transfer number.
+- Source branch.
+- Destination branch.
+- Product(s).
+- Quantity per product.
+- Requested by.
+- Approved by, if approval is required.
+- Dispatch date.
+- Receiving date.
+- Transfer status.
+- Notes.
+- Transfer history.
+
+## Transfer statuses
+
+Implement a workflow such as:
+
+- Draft.
+- Pending Approval.
+- Approved.
+- Dispatched.
+- In Transit.
+- Received.
+- Rejected.
+- Cancelled.
+
+Configure transitions so that invalid state changes cannot happen.
+
+## Stock transfer rules
+
+- Source and destination branches must be different.
+- The source must have sufficient stock.
+- Stock must not be deducted twice.
+- Stock must not be added twice.
+- The destination must confirm received quantities.
+- Partial receiving discrepancies must be recorded.
+- Every transfer must have a complete audit trail.
+
+Use a transaction-safe implementation.
+
+The stock must be deducted from the source and credited to the destination only at the appropriate verified stages of the workflow.
+
+The system must not create stock that was never dispatched or received.
+
+---
+
+# 12. SUPPLIER MANAGEMENT
+
+Create a Supplier Management module.
+
+Supplier fields:
+
+- Supplier ID.
+- Supplier name.
+- Supplier code.
+- Contact person.
+- Phone number.
+- Email.
+- Address.
+- Tax identification details, if provided.
+- Products supplied.
+- Delivery count.
+- Notes.
+- Status.
+- Date created.
+
+Features:
+
+- Add supplier.
+- Edit supplier.
+- View supplier profile.
+- Search suppliers.
+- Filter suppliers.
+- View supplier purchase orders.
+- View supplier delivery history.
+- Track supplier delivery counts.
+- Deactivate suppliers.
+
+Supplier data must be available to authorized procurement personnel.
+
+---
+
+# 13. PURCHASE ORDER MANAGEMENT
+
+Create a professional Purchase Order module.
+
+Purchase orders must contain:
+
+- Purchase Order number.
+- Supplier.
+- Branch receiving stock.
+- Order date.
+- Expected delivery date.
+- Created by.
+- Multiple product line items.
+- Quantity ordered.
+- Unit cost.
+- Line total.
+- Grand total.
+- Status.
+- Notes.
+
+## Purchase order statuses
+
+Implement:
+
+- Draft.
+- Sent.
+- Partially Received.
+- Received.
+- Cancelled.
+
+## Purchase order workflow
+
+1. Procurement Manager creates a PO.
+2. Select supplier.
+3. Select receiving branch.
+4. Add products.
+5. Enter quantities.
+6. Automatically populate unit cost.
+7. Calculate totals.
+8. Save as Draft.
+9. Review the PO.
+10. Mark as Sent.
+11. Track deliveries.
+12. Record delivery through GRN.
+13. Update received quantities.
+14. Mark as Partially Received or Received automatically based on quantities.
+
+## PO functionality
+
+- Dynamic line items.
+- Add/remove items.
+- Automatic calculations.
+- Product search.
+- Supplier selection.
+- Status filtering.
+- PO history.
+- Print-friendly PO.
+- Downloadable PDF, if supported.
+- Link GRNs to purchase orders.
+- Prevent receiving quantities beyond ordered amounts unless authorized.
+
+Purchase orders must not automatically increase stock merely because they were created or marked Sent.
+
+Stock should increase only when actual goods are received and recorded.
+
+---
+
+# 14. LOW-STOCK ALERTS AND REORDER MANAGEMENT
+
+Implement an automated low-stock alert system.
+
+The system must continuously compare branch stock against product reorder levels.
+
+## Alert rules
+
+When:
+
+Quantity on hand <= Reorder level
+
+Generate a low-stock alert.
+
+When:
+
+Quantity on hand = 0
+
+Generate an out-of-stock alert.
+
+## Dashboard alerts
+
+Display:
+
+- Low-stock products.
+- Out-of-stock products.
+- Branch.
+- Product name.
+- Product code.
+- Current quantity.
+- Reorder level.
+- Shortfall quantity.
+- Suggested replenishment quantity.
+- Alert severity.
+
+## Shortfall calculation
+
+Shortfall = Reorder Level - Current Stock.
+
+When the stock is below the reorder level, calculate the shortfall accurately.
+
+Allow users with the correct permission to open an intake form, prepare a purchase order, or initiate a stock transfer from the alert.
+
+Do not use fake alerts.
+
+Alert information must be based on actual database stock records.
+
+---
+
+# 15. DASHBOARD
+
+Create a professional dashboard that changes according to the user's role.
+
+## Administrator dashboard
+
+Display:
+
+- Total products.
+- Total active products.
+- Total branches.
+- Total stock value.
+- Low-stock items.
+- Out-of-stock items.
+- Pending purchase orders.
+- Pending stock transfers.
+- Recent inventory activity.
+- Branch stock comparison.
+- Stock movement summary.
+- Inventory value by branch.
+
+## Procurement Manager dashboard
+
+Display:
+
+- Consolidated stock value.
+- Products below reorder level across all branches.
+- Out-of-stock products.
+- Purchase orders by status.
+- Suppliers.
+- Pending deliveries.
+- Top intake products.
+- Procurement activity.
+- Branch stock comparison.
+
+## Branch Manager dashboard
+
+Display only the assigned branch's:
+
+- Total products.
+- Total stock value, where permitted.
+- Low-stock products.
+- Out-of-stock products.
+- Recent stock intake.
+- Recent stock issues.
+- Pending transfers.
+- Stock movement.
+- Branch inventory summary.
+
+## Stock Controller dashboard
+
+Display:
+
+- Current branch stock.
+- Low-stock alerts.
+- Products requiring restocking.
+- Recent GRNs.
+- Recent stock issues.
+- Transfer receipts awaiting action.
+- Quick actions for recording intake and stock issues.
+
+## Dashboard design
+
+Use:
+
+- KPI cards.
+- Charts.
+- Tables.
+- Alerts.
+- Recent activity.
+- Branch comparison charts where authorized.
+- Meaningful date filters.
+
+Charts must be populated using real database information.
+
+---
+
+# 16. MANAGEMENT REPORTS
+
+Create a dedicated reports module.
+
+Implement the following reports:
+
+## A. Stock Value by Branch
+
+Display:
+
+- Branch.
+- Number of products.
+- Total stock quantity.
+- Total inventory value.
+
+## B. Stock Value by Product
+
+Display:
+
+- Product code.
+- Product name.
+- Category.
+- Branch.
+- Quantity.
+- Unit cost.
+- Total value.
+
+## C. Stock Issues by Type
+
+Display stock issues grouped by:
+
+- Sale.
+- Transfer.
+- Damage.
+- Expiry.
+- Adjustment.
+
+## D. Top Intake Products
+
+Identify products receiving the highest quantities over a selected period.
+
+## E. Low-Stock Report
+
+Display:
+
+- Product.
+- Branch.
+- Current stock.
+- Reorder level.
+- Shortfall.
+- Suggested reorder quantity.
+
+## F. Stock Movement Report
+
+Display all stock transactions with filters.
+
+## G. Purchase Order Report
+
+Display:
+
+- Supplier.
+- PO number.
+- Branch.
+- Date.
+- Ordered quantity.
+- Received quantity.
+- Remaining quantity.
+- Total cost.
+- Status.
+
+## H. Supplier Performance/Delivery History
+
+Display supplier delivery counts and delivery history based on recorded system transactions.
+
+## I. Inventory Valuation
+
+Provide accurate stock valuation reports using the inventory cost stored in the system.
+
+## Report filters
+
+Allow filtering by:
+
+- Date range.
+- Branch.
+- Category.
+- Product.
+- Supplier.
+- Transaction type.
+
+## Reports export
+
+Implement:
+
+- PDF export where appropriate.
+- Excel/CSV export where appropriate.
+- Print-friendly report views.
+
+Ensure reports use actual data and correctly apply user access restrictions.
+
+---
+
+# 17. INVENTORY LEDGER AND AUDIT TRAIL
+
+Implement an inventory ledger as the foundation of stock accountability.
+
+Every stock movement must create an immutable or appropriately protected transaction record.
+
+Transaction types should include:
+
+- Opening Stock.
+- GRN / Intake.
+- Sale.
+- Transfer Out.
+- Transfer In.
+- Damage.
+- Expiry.
+- Adjustment.
+- Reversal.
+
+Ledger entries must include:
+
+- Transaction ID.
+- Product.
+- Branch.
+- Transaction type.
+- Quantity added.
+- Quantity removed.
+- Balance after transaction.
+- Reference number.
+- User.
+- Timestamp.
+- Notes.
+
+## Audit logging
+
+Record significant system actions, including:
+
+- Login.
+- Logout.
+- Product creation.
+- Product edits.
+- Category creation and changes.
+- Supplier changes.
+- Stock intake.
+- Stock issues.
+- Stock transfers.
+- Purchase order creation.
+- Purchase order updates.
+- User creation.
+- Role assignment.
+- Stock adjustments.
+- Report access where necessary.
+- Administrative changes.
+
+Audit logs must include:
+
+- User.
+- Action.
+- Entity affected.
+- Entity ID.
+- Timestamp.
+- Branch, where relevant.
+- Relevant action metadata.
+
+Audit logs must be protected from ordinary users editing or deleting them.
+
+---
+
+# 18. DATABASE DESIGN
+
+Design a normalized relational database.
+
+At minimum, consider the following tables:
+
+- users
+- roles, if roles are implemented separately
+- branches
+- categories
+- products
+- suppliers
+- stocks
+- stock_intakes
+- stock_intake_items
+- stock_issues
+- stock_issue_items
+- stock_transfers
+- stock_transfer_items
+- purchase_orders
+- purchase_order_items
+- inventory_transactions
+- audit_logs
+- notifications
+
+Add other tables when required for a proper implementation.
+
+## Database requirements
+
+- Proper primary keys.
+- Foreign keys.
+- Unique product codes.
+- Unique transaction references.
+- Unique branch-product stock records.
+- Appropriate indexes.
+- Timestamps.
+- Soft deletion where appropriate.
+- Database migrations.
+- Seeders.
+- Referential integrity.
+
+Avoid duplicated or denormalized data unless there is a clear operational justification.
+
+Use decimal precision for monetary values.
+
+Do not use floating-point arithmetic for financial calculations where it could introduce rounding errors.
+
+---
+
+# 19. STOCK ACCURACY AND TRANSACTION SAFETY
+
+Inventory accuracy is one of the most critical requirements.
+
+Implement all stock changes using:
+
+- Database transactions.
+- Row locking or other concurrency-safe mechanisms where appropriate.
+- Validation.
+- Stock movement records.
+- Duplicate submission prevention.
+- Idempotency protections for critical operations.
+
+The system must prevent:
+
+- Negative stock unless an explicitly authorized and configured policy permits it.
+- Duplicate GRNs.
+- Duplicate transfer receipt processing.
+- Duplicate stock issue processing.
+- Stock updates without ledger entries.
+- Ledger entries without corresponding stock updates.
+- Race conditions during simultaneous stock operations.
+- Invalid branch stock updates.
+
+For all inventory movements, ensure the stock table and ledger remain consistent.
+
+Where an error occurs, roll back the complete transaction.
+
+Never silently ignore inventory errors.
+
+---
+
+# 20. USER MANAGEMENT
+
+Create a user management module for authorized administrators.
+
+User fields:
+
+- Full name.
+- Username.
+- Email.
+- Phone.
+- Password.
+- Role.
+- Branch.
+- Account status.
+- Date created.
+
+Features:
+
+- Create user.
+- Edit user.
+- Assign role.
+- Assign branch.
+- Activate/deactivate account.
+- Reset password.
+- Search users.
+- Filter by role.
+- Filter by branch.
+
+Ensure administrators cannot accidentally remove the last active administrator.
+
+Password handling must be secure.
+
+---
+
+# 21. AUTHENTICATION AND SECURITY
+
+Implement secure authentication.
+
+Requirements:
+
+- Login.
+- Logout.
+- Password hashing.
+- Secure session handling.
+- Password reset workflow where practical.
+- CSRF protection.
+- Input validation.
+- SQL injection prevention.
+- XSS protection.
+- Authorization checks.
+- Rate limiting on authentication.
+- Secure error handling.
+- No exposed secrets.
+- Environment configuration through .env.
+- Protection against unauthorized direct access.
+- Session expiration.
+- Password confirmation for sensitive actions where appropriate.
+
+Use Laravel's security features.
+
+Do not store plain-text passwords.
+
+Do not expose database credentials in source code.
+
+---
+
+# 22. SEARCH, FILTERING, AND DATA MANAGEMENT
+
+Every major module must have practical data management functionality.
+
+Implement:
+
+- Search.
+- Pagination.
+- Sorting.
+- Filters.
+- Date ranges.
+- Clear filters.
+- Empty states.
+- Validation errors.
+- Confirmation dialogs for sensitive actions.
+- Success and failure messages.
+
+Search should support relevant fields.
+
+For example:
+
+Products:
+- Name.
+- Product code.
+- Category.
+
+Suppliers:
+- Name.
+- Supplier code.
+- Contact.
+
+Stock:
+- Product.
+- Code.
+- Branch.
+- Category.
+
+Purchase Orders:
+- PO number.
+- Supplier.
+- Branch.
+- Status.
+
+---
+
+# 23. NOTIFICATIONS
+
+Create a notification system for relevant events.
+
+Notifications may include:
+
+- Low stock.
+- Out of stock.
+- Purchase order updates.
+- Pending transfers.
+- Transfer dispatch.
+- Transfer receipt.
+- GRN completion.
+- Stock adjustment.
+- Important system alerts.
+
+Notifications should be relevant to the user's role and branch.
+
+Provide:
+
+- Notification count.
+- Notification dropdown or page.
+- Mark as read.
+- Notification history.
+
+---
+
+# 24. SYSTEM SETTINGS
+
+Provide an administrator-only settings section for:
+
+- Business name.
+- System name.
+- Branch configuration.
+- Stock alert settings.
+- Default reorder settings, where applicable.
+- System preferences.
+- Currency.
+
+Use UGX (Ugandan Shillings) as the default currency.
+
+Format monetary amounts consistently, for example:
+
+UGX 250,000
+
+Do not hardcode unnecessary configuration values throughout the application.
+
+---
+
+# 25. BUSINESS RULES
+
+Follow these rules carefully:
+
+1. Every product must have a unique product code.
+2. Every product must have a stock record for each branch.
+3. Products start with zero stock unless opening stock is deliberately recorded.
+4. Stock can only increase through valid recorded stock transactions.
+5. Stock can only decrease through valid recorded stock transactions.
+6. All stock movements must have a transaction reference.
+7. Stock intake must increase inventory.
+8. Stock issue must decrease inventory.
+9. Transfer-out must reduce stock from the source branch.
+10. Transfer-in must increase stock at the receiving branch only when the receiving workflow confirms receipt.
+11. A stock transfer must never transfer stock to the same branch.
+12. Insufficient stock must prevent unauthorized issuance.
+13. Stock adjustments must require a reason.
+14. GRNs must not be processed twice.
+15. Purchase orders do not increase stock.
+16. Purchase orders must be reconciled with actual received quantities.
+17. Stock alerts must use actual quantities and reorder levels.
+18. Branch users must only access permitted branch information.
+19. Inventory history must be traceable.
+20. Historical transactions must not be casually deleted.
+21. All important operations must be audited.
+22. All monetary values must be calculated accurately.
+23. All critical stock operations must be atomic.
+24. Dashboard totals must be calculated from real records.
+25. The system must be usable without POS integration.
+
+---
+
+# 26. OUT-OF-SCOPE FEATURES
+
+Do not introduce the following as core system features:
+
+- Point of Sale integration.
+- Payroll.
+- E-commerce.
+- Customer loyalty.
+- Automated online supplier ordering.
+- Customer account management.
+
+Do not expand the project into a supermarket ERP unless specifically requested.
+
+Focus on the inventory management scope documented in the project.
+
+---
+
+# 27. IMPLEMENTATION STRUCTURE
+
+Use a clean Laravel structure.
+
+Organize the application into:
+
+- Models.
+- Controllers.
+- Services.
+- Policies.
+- Middleware.
+- Form Requests.
+- Migrations.
+- Seeders.
+- Routes.
+- Blade layouts.
+- Components.
+- Assets.
+- Validation.
+- Tests.
+
+Use service classes for complex inventory operations, such as:
+
+- Stock intake processing.
+- Stock issue processing.
+- Transfer processing.
+- Purchase order receiving.
+- Stock adjustments.
+- Inventory valuation.
+- Report generation.
+
+Avoid putting complicated stock calculations directly inside controllers.
+
+Use clear, maintainable code.
+
+---
+
+# 28. DEVELOPMENT SPRINT PLAN
+
+Develop the system in three logical sprints.
+
+## SPRINT 1 – FOUNDATION AND INVENTORY
+
+Implement:
+
+- Project setup.
+- Authentication.
+- Database structure.
+- Branches.
+- User roles.
+- User management.
+- Product categories.
+- Product catalogue.
+- Branch stock initialization.
+- Stock level dashboard.
+- Search and filtering.
+- Basic audit logging.
+
+The sprint must produce a usable foundation.
+
+## SPRINT 2 – INVENTORY OPERATIONS
+
+Implement:
+
+- GRN / Stock intake.
+- Stock issue.
+- Stock issue classifications.
+- Stock validation.
+- Stock ledger.
+- Low-stock alerts.
+- Out-of-stock alerts.
+- Stock movement history.
+- Inter-branch transfer workflows.
+- Transfer receipt confirmation.
+
+The sprint must produce functional inventory operations.
+
+## SPRINT 3 – PROCUREMENT AND MANAGEMENT
+
+Implement:
+
+- Supplier management.
+- Purchase orders.
+- Purchase order tracking.
+- Purchase order receiving.
+- Management dashboards.
+- Inventory valuation.
+- Branch comparison.
+- Management reports.
+- Report exports.
+- Notifications.
+- Final security review.
+- User acceptance testing.
+- System documentation.
+
+---
+
+# 29. TESTING REQUIREMENTS
+
+Create a proper testing strategy.
+
+## Unit tests
+
+Test:
+
+- Stock calculations.
+- Reorder logic.
+- Stock status logic.
+- Shortfall calculations.
+- Inventory valuation.
+- Purchase order calculations.
+- Transfer calculations.
+
+## Feature tests
+
+Test:
+
+- Login.
+- Logout.
+- Product CRUD.
+- Category CRUD.
+- Supplier CRUD.
+- GRN creation.
+- Stock issue.
+- Stock transfer.
+- Purchase order creation.
+- Purchase order receiving.
+- Reports.
+- Notifications.
+- User management.
+
+## Security tests
+
+Test:
+
+- Unauthorized role access.
+- Branch isolation.
+- Direct URL access.
+- Forged branch IDs.
+- Invalid inputs.
+- CSRF protection.
+- Unauthorized stock modification.
+
+## Inventory integrity tests
+
+Test:
+
+- Receiving stock increases quantity.
+- Issuing stock decreases quantity.
+- Issuing more than available stock is rejected.
+- Transfers do not create or destroy stock.
+- Transfers cannot be received twice.
+- GRNs cannot be duplicated.
+- Concurrent stock operations do not corrupt balances.
+- Ledger balances correspond to actual inventory balances.
+
+---
+
+# 30. USER ACCEPTANCE TESTING
+
+Provide a practical UAT checklist for all roles.
+
+Test users should include:
+
+- Administrator.
+- Procurement Manager.
+- Branch Manager.
+- Stock Controller.
+
+Test the system against real-world scenarios:
+
+### Scenario 1
+Administrator creates a new product.
+
+### Scenario 2
+Administrator creates a user and assigns the user to Najjera.
+
+### Scenario 3
+Stock Controller records a delivery of 50 units.
+
+### Scenario 4
+Stock Controller records a stock issue of 5 units.
+
+### Scenario 5
+The branch stock quantity is updated correctly.
+
+### Scenario 6
+A product reaches its reorder level and appears in the low-stock dashboard.
+
+### Scenario 7
+Procurement Manager creates a purchase order.
+
+### Scenario 8
+Goods are received against the purchase order.
+
+### Scenario 9
+Stock is transferred from Ntinda to Najjera.
+
+### Scenario 10
+Najjera branch confirms receipt.
+
+### Scenario 11
+Administrator generates a consolidated stock value report.
+
+### Scenario 12
+Branch Manager attempts to access another branch and is denied.
+
+For each test, document:
+
+- Test ID.
+- Test name.
+- User role.
+- Preconditions.
+- Test steps.
+- Expected result.
+- Actual result.
+- Pass/Fail.
+
+---
+
+# 31. SAMPLE DATA
+
+Provide realistic demonstration data through seeders.
+
+Create:
+
+## Branches
+
+- Ntinda.
+- Najjera.
+- Kyaliwajjala.
+
+## Categories
+
+- Beverages.
+- Cereals.
+- Dairy.
+- Cleaning Supplies.
+- Confectionery.
+- Household Items.
+- Personal Care.
+
+## Products
+
+Populate the database with realistic supermarket products such as:
+
+- Bottled water.
+- Soda.
+- Juice.
+- Rice.
+- Sugar.
+- Milk.
+- Soap.
+- Detergent.
+- Cooking oil.
+- Bread.
+- Biscuits.
+- Tissue paper.
+
+Each product should have:
+
+- Unique SKU.
+- Category.
+- Unit cost.
+- Selling price.
+- Reorder level.
+
+## Users
+
+Create sample users for all four roles.
+
+Provide development-only credentials in the README.
+
+Do not use real employee credentials or real confidential business data.
+
+---
+
+# 32. SYSTEM DOCUMENTATION
+
+Generate a comprehensive README containing:
+
+- Project overview.
+- System features.
+- Technology stack.
+- Requirements.
+- Installation instructions.
+- Database setup.
+- Environment configuration.
+- Migration instructions.
+- Seeder instructions.
+- Development server startup.
+- Default login credentials.
+- User role descriptions.
+- System module descriptions.
+- Common troubleshooting.
+- Backup instructions.
+- Deployment instructions.
+- Security considerations.
+
+Also create:
+
+- Database ERD.
+- System architecture diagram.
+- Use case diagram.
+- Key inventory workflows.
+- Administrator manual.
+- User manual.
+- Testing documentation.
+
+---
+
+# 33. DEVELOPMENT EXECUTION RULES
+
+Follow these instructions throughout development:
+
+1. First inspect the current project files and environment.
+2. If a project already exists, do not destroy or replace it unnecessarily.
+3. Identify the current framework, dependencies, database configuration, and existing implementation.
+4. Create a development plan.
+5. Design the database before implementing complex features.
+6. Implement features incrementally.
+7. Complete the backend and frontend for each module.
+8. Do not create buttons that do nothing.
+9. Do not create placeholder pages for required modules.
+10. Do not fake database data on the dashboard.
+11. Do not hardcode totals that should come from the database.
+12. Do not implement stock calculations only in JavaScript.
+13. Validate data on the backend.
+14. Ensure the UI communicates errors clearly.
+15. Ensure every form submits correctly.
+16. Ensure all CRUD operations persist in the database.
+17. Ensure authorization is enforced server-side.
+18. Ensure inventory transactions are recorded.
+19. Ensure reports reflect actual system data.
+20. Ensure all modules integrate with one another.
+
+If a feature is not yet implemented, clearly identify it instead of pretending it is functional.
+
+---
+
+# 34. REQUIRED FINAL QUALITY
+
+The final system must feel like a real inventory management product.
+
+The quality standard should include:
+
+- Professional visual design.
+- Consistent design system.
+- Functional navigation.
+- Working authentication.
+- Role-based dashboards.
+- Branch-aware access control.
+- Complete inventory management.
+- Working GRN.
+- Working stock issues.
+- Working stock transfers.
+- Working suppliers.
+- Working purchase orders.
+- Real stock alerts.
+- Real inventory reports.
+- Accurate inventory valuation.
+- Transaction history.
+- Audit logs.
+- Database integrity.
+- Secure backend.
+- Responsive frontend.
+- Automated tests.
+- Documentation.
+
+Do not stop after creating the dashboard.
+
+Do not stop after generating database migrations.
+
+Do not stop after implementing the first module.
+
+Continue implementing and integrating the complete system until the requirements have been fulfilled.
+
+---
+
+# 35. FINAL INSTRUCTION
+
+Begin by analyzing the requirements and the existing project environment.
+
+Then:
+
+1. Present a concise system architecture.
+2. Present the database schema and relationships.
+3. Present the implementation roadmap.
+4. Set up the project.
+5. Implement the application.
+6. Build the professional UI.
+7. Implement all modules.
+8. Integrate all modules.
+9. Run migrations and seeders.
+10. Run automated tests.
+11. Fix identified errors.
+12. Verify all critical inventory workflows.
+13. Produce complete documentation.
+
+Make sensible engineering decisions independently where minor implementation details are not specified.
+
+Do not ask unnecessary questions.
+
+Prioritize correctness, security, usability, maintainability, and complete functionality.
+
+**The goal is a fully operational, professional, centralized multi-branch inventory management web application for Quality Supermarkets Uganda Limited—not a prototype, not a static design, and not a collection of disconnected CRUD screens.**
