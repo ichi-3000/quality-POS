@@ -1,4 +1,4 @@
-import type { DbInstance } from '../db/connection.ts';
+import type { DbInstance } from '../db/types.ts';
 import {
   computeShortfall,
   computeStockStatus,

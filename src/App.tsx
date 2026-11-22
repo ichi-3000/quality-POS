@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { apiRequest, setAuthToken } from './api/client';
+import React, { useEffect, useState } from 'react';
+import { apiRequest, getAuthToken, setAuthToken } from './api/client';
 import { Layout, NAV_ITEMS, type NavRoute } from './components/Layout';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { CategoriesPage } from './pages/CategoriesPage';
@@ -19,7 +19,31 @@ import type { User } from './types';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [checkingSession, setCheckingSession] = useState<boolean>(() => Boolean(getAuthToken()));
   const [activeRoute, setActiveRoute] = useState<NavRoute>('dashboard');
+
+  async function syncSessionFromDb() {
+    const token = getAuthToken();
+    if (!token) {
+      setUser(null);
+      setCheckingSession(false);
+      return;
+    }
+    try {
+      const res = await apiRequest<{ user: User }>('/api/auth/me');
+      setUser(res.user);
+    } catch {
+      setAuthToken(null);
+      setUser(null);
+      setActiveRoute('dashboard');
+    } finally {
+      setCheckingSession(false);
+    }
+  }
+
+  useEffect(() => {
+    void syncSessionFromDb();
+  }, []);
 
   async function handleLogout() {
     try {
@@ -41,6 +65,20 @@ export default function App() {
     } else {
       setActiveRoute('dashboard');
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center p-4">
+        <div className="bg-white border border-slate-200 rounded-md px-6 py-5 text-center space-y-2 max-w-xs w-full">
+          <div className="w-10 h-10 mx-auto rounded bg-[#1A3A5C] text-white font-display font-bold text-lg flex items-center justify-center">
+            QS
+          </div>
+          <div className="text-sm font-semibold text-[#1A3A5C]">Initializing QS-IMS</div>
+          <div className="text-xs text-slate-500">Loading local branch database...</div>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -82,7 +120,13 @@ export default function App() {
       case 'audit-logs':
         return <AuditLogsPage user={user} />;
       case 'settings':
-        return <SettingsPage />;
+        return (
+          <SettingsPage
+            onDatabaseReplaced={() => {
+              void syncSessionFromDb();
+            }}
+          />
+        );
       default:
         return <DashboardPage user={user} onNavigate={handleNavigate} />;
     }

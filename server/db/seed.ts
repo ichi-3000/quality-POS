@@ -1,8 +1,8 @@
-import crypto from 'node:crypto';
-import type { DbInstance } from './connection.ts';
-import { runInTransaction } from './connection.ts';
+import type { DbInstance } from './types.ts';
+import { runInTransaction } from './types.ts';
 import { hashPassword } from '../middleware/auth.ts';
 import { checkAndNotifyStockLevel, createNotification, recordAuditLog } from '../services/auditService.ts';
+import { randomHex } from '../utils/crypto.ts';
 
 export function seedDatabase(db: DbInstance): void {
   const existingRoles = db.prepare('SELECT COUNT(*) AS cnt FROM roles').get() as { cnt: number };
@@ -173,7 +173,7 @@ export function seedDatabase(db: DbInstance): void {
         const qty = qtys[i];
         insertStock.run(prodId, bId, qty);
         if (qty > 0) {
-          const ref = `TX-OPEN-${prodId}-${bId}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
+          const ref = `TX-OPEN-${prodId}-${bId}-${randomHex(2).toUpperCase()}`;
           insertTx.run(ref, prodId, bId, qty, qty, p[5], adminId, 'Initial opening stock balance');
         }
         checkAndNotifyStockLevel(db, prodId, bId);

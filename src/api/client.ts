@@ -1,13 +1,41 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { dispatchLocalRequest } from '../localDb/localServer';
 
-let authToken: string | null = null;
+const TOKEN_STORAGE_KEY = 'qsims_auth_token';
+
+function readStoredToken(): string | null {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem(TOKEN_STORAGE_KEY);
+    }
+  } catch {
+    // ignore storage access errors
+  }
+  return null;
+}
+
+let authToken: string | null = readStoredToken();
 
 export function setAuthToken(token: string | null) {
   authToken = token;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      if (token) {
+        localStorage.setItem(TOKEN_STORAGE_KEY, token);
+      } else {
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+      }
+    }
+  } catch {
+    // ignore storage access errors
+  }
 }
 
 export function getAuthToken(): string | null {
+  if (!authToken) {
+    authToken = readStoredToken();
+  }
   return authToken;
 }
 
@@ -19,45 +47,73 @@ export class ApiError extends Error {
   }
 }
 
+function normalizeRequestHeaders(rawHeaders?: HeadersInit): Record<string, string> {
+  const result: Record<string, string> = {};
+  if (!rawHeaders) return result;
+  if (rawHeaders instanceof Headers) {
+    rawHeaders.forEach((value, key) => {
+      result[key.toLowerCase()] = value;
+    });
+  } else if (Array.isArray(rawHeaders)) {
+    for (const [key, value] of rawHeaders) {
+      result[key.toLowerCase()] = value;
+    }
+  } else {
+    for (const [key, value] of Object.entries(rawHeaders)) {
+      if (value !== undefined) {
+        result[key.toLowerCase()] = String(value);
+      }
+    }
+  }
+  return result;
+}
+
 export async function apiRequest<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const headers = new Headers(options.headers || {});
-  if (authToken) {
-    headers.set('Authorization', `Bearer ${authToken}`);
+  const headers = normalizeRequestHeaders(options.headers);
+  const token = getAuthToken();
+  if (token) {
+    headers['authorization'] = `Bearer ${token}`;
   }
-  if (options.body && !headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json');
+  if (options.body && !headers['content-type']) {
+    headers['content-type'] = 'application/json';
   }
 
-  const res = await fetch(url, {
-    ...options,
+  const res = await dispatchLocalRequest(
+    options.method || 'GET',
+    url,
     headers,
-  });
+    options.body
+  );
 
   if (res.status === 204) {
     return {} as T;
   }
 
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
+  const data = (res.body && typeof res.body === 'object' ? res.body : {}) as Record<string, any>;
+  if (res.status >= 400) {
     throw new ApiError(res.status, data?.error || `Request failed (${res.status})`);
   }
-  return data as T;
+  return res.body as T;
 }
 
 export async function downloadCsvReport(url: string, filename: string): Promise<void> {
-  const headers = new Headers();
-  if (authToken) {
-    headers.set('Authorization', `Bearer ${authToken}`);
+  const headers: Record<string, string> = {};
+  const token = getAuthToken();
+  if (token) {
+    headers['authorization'] = `Bearer ${token}`;
   }
-  const res = await fetch(url, { headers });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
+
+  const res = await dispatchLocalRequest('GET', url, headers);
+  if (res.status >= 400) {
+    const err = (res.body && typeof res.body === 'object' ? res.body : {}) as Record<string, any>;
     throw new ApiError(res.status, err?.error || 'Failed to download CSV');
   }
-  const blob = await res.blob();
+
+  const csvText = typeof res.body === 'string' ? res.body : String(res.body ?? '');
+  const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8' });
   const objectUrl = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = objectUrl;

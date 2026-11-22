@@ -1,9 +1,9 @@
-import crypto from 'node:crypto';
-import type { DbInstance } from '../db/connection.ts';
-import { runInTransaction } from '../db/connection.ts';
+import type { DbInstance } from '../db/types.ts';
+import { runInTransaction } from '../db/types.ts';
 import { AppError, assertBranchWriteAccess, type AuthUser } from '../middleware/auth.ts';
 import { checkAndNotifyStockLevel, createNotification, recordAuditLog } from './auditService.ts';
 import { computeGrandTotal, computeLineTotal } from './inventoryMath.ts';
+import { randomHex } from '../utils/crypto.ts';
 
 export type IssueType = 'sale' | 'transfer' | 'damage' | 'expiry' | 'adjustment';
 
@@ -27,12 +27,12 @@ function generateIssueNumber(db: DbInstance): string {
   const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');
   const countRow = db.prepare('SELECT COUNT(*) AS cnt FROM stock_issues').get() as { cnt: number };
   const seq = String(countRow.cnt + 1).padStart(4, '0');
-  const suffix = crypto.randomBytes(2).toString('hex').toUpperCase();
+  const suffix = randomHex(2).toUpperCase();
   return `ISS-${datePart}-${seq}-${suffix}`;
 }
 
 function generateLedgerRef(prefix: string): string {
-  return `${prefix}-${Date.now()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+  return `${prefix}-${Date.now()}-${randomHex(3).toUpperCase()}`;
 }
 
 export function createStockIssue(

@@ -1,9 +1,9 @@
-import crypto from 'node:crypto';
-import type { DbInstance } from '../db/connection.ts';
-import { runInTransaction } from '../db/connection.ts';
+import type { DbInstance } from '../db/types.ts';
+import { runInTransaction } from '../db/types.ts';
 import { AppError, isGlobalRole, type AuthUser } from '../middleware/auth.ts';
 import { checkAndNotifyStockLevel, createNotification, recordAuditLog } from './auditService.ts';
 import { createStockIssue } from './issueService.ts';
+import { randomHex } from '../utils/crypto.ts';
 
 export type TransferStatus =
   | 'draft'
@@ -34,7 +34,7 @@ function generateTransferNumber(db: DbInstance): string {
     cnt: number;
   };
   const seq = String(countRow.cnt + 1).padStart(4, '0');
-  const suffix = crypto.randomBytes(2).toString('hex').toUpperCase();
+  const suffix = randomHex(2).toUpperCase();
   return `TRF-${datePart}-${seq}-${suffix}`;
 }
 
@@ -439,7 +439,7 @@ export function receiveTransfer(
           .prepare('SELECT quantity_on_hand FROM stocks WHERE product_id = ? AND branch_id = ?')
           .get(dbItem.product_id, trf.destination_branch_id) as { quantity_on_hand: number };
 
-        const ledgerRef = `TX-TRI-${Date.now()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+        const ledgerRef = `TX-TRI-${Date.now()}-${randomHex(3).toUpperCase()}`;
         db.prepare(
           `INSERT INTO inventory_transactions (
             transaction_ref, product_id, branch_id, transaction_type,

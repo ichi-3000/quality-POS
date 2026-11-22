@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
+import { runInTransaction, type DbInstance } from './types.ts';
 
-export type DbInstance = DatabaseSync;
+export { runInTransaction, type DbInstance };
 
 let sharedDb: DbInstance | null = null;
 
@@ -17,7 +18,7 @@ export function createDatabase(dbPath?: string): DbInstance {
     }
   }
 
-  const db = new DatabaseSync(resolvedPath);
+  const db = new DatabaseSync(resolvedPath) as unknown as DbInstance;
   db.exec('PRAGMA foreign_keys = ON;');
   if (resolvedPath !== ':memory:') {
     db.exec('PRAGMA journal_mode = WAL;');
@@ -31,20 +32,4 @@ export function getDatabase(): DbInstance {
     sharedDb = createDatabase();
   }
   return sharedDb;
-}
-
-export function runInTransaction<T>(db: DbInstance, fn: () => T): T {
-  db.exec('BEGIN IMMEDIATE');
-  try {
-    const result = fn();
-    db.exec('COMMIT');
-    return result;
-  } catch (err) {
-    try {
-      db.exec('ROLLBACK');
-    } catch {
-      // ignore rollback failure if already rolled back
-    }
-    throw err;
-  }
 }

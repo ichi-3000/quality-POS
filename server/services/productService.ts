@@ -1,5 +1,5 @@
-import type { DbInstance } from '../db/connection.ts';
-import { runInTransaction } from '../db/connection.ts';
+import type { DbInstance } from '../db/types.ts';
+import { runInTransaction } from '../db/types.ts';
 import { AppError } from '../middleware/auth.ts';
 import { recordAuditLog } from './auditService.ts';
 

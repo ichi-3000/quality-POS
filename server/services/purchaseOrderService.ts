@@ -1,9 +1,9 @@
-import crypto from 'node:crypto';
-import type { DbInstance } from '../db/connection.ts';
-import { runInTransaction } from '../db/connection.ts';
+import type { DbInstance } from '../db/types.ts';
+import { runInTransaction } from '../db/types.ts';
 import { AppError, type AuthUser } from '../middleware/auth.ts';
 import { createNotification, recordAuditLog } from './auditService.ts';
 import { computeGrandTotal, computeLineTotal } from './inventoryMath.ts';
+import { randomHex } from '../utils/crypto.ts';
 
 export interface PoItemInput {
   product_id: number;
@@ -27,7 +27,7 @@ function generatePoNumber(db: DbInstance): string {
     cnt: number;
   };
   const seq = String(countRow.cnt + 1).padStart(4, '0');
-  const suffix = crypto.randomBytes(2).toString('hex').toUpperCase();
+  const suffix = randomHex(2).toUpperCase();
   return `PO-${datePart}-${seq}-${suffix}`;
 }
 

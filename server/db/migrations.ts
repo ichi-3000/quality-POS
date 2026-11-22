@@ -1,4 +1,4 @@
-import type { DbInstance } from './connection.ts';
+import type { DbInstance } from './types.ts';
 
 export function runMigrations(db: DbInstance): void {
   db.exec(`

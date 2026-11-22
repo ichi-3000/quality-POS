@@ -1,7 +1,13 @@
-import crypto from 'node:crypto';
-import type { NextFunction, Request, Response } from 'express';
-import type { DbInstance } from '../db/connection.ts';
+import type { DbInstance } from '../db/types.ts';
+import type { AppNextFunction, AppRequest, AppResponse } from '../httpTypes.ts';
 import { recordAuditLog } from '../services/auditService.ts';
+import {
+  getSessionSecret,
+  hmacSha256Hex,
+  pbkdf2Sha256Hex,
+  randomHex,
+  timingSafeEqualHex,
+} from '../utils/crypto.ts';
 
 export type RoleSlug = 'admin' | 'procurement_manager' | 'branch_manager' | 'stock_controller';
 
@@ -19,7 +25,7 @@ export interface AuthUser {
   status: 'active' | 'inactive';
 }
 
-export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends AppRequest {
   user?: AuthUser;
   sessionTokenHash?: string;
 }
@@ -33,8 +39,8 @@ export class AppError extends Error {
 }
 
 export function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const derived = crypto.scryptSync(password, salt, 64).toString('hex');
+  const salt = randomHex(16);
+  const derived = pbkdf2Sha256Hex(password, salt);
   return `${salt}:${derived}`;
 }
 
@@ -42,19 +48,16 @@ export function verifyPassword(password: string, storedHash: string): boolean {
   const parts = storedHash.split(':');
   if (parts.length !== 2) return false;
   const [salt, expectedHex] = parts;
-  const actualBuf = crypto.scryptSync(password, salt, 64);
-  const expectedBuf = Buffer.from(expectedHex, 'hex');
-  if (actualBuf.length !== expectedBuf.length) return false;
-  return crypto.timingSafeEqual(actualBuf, expectedBuf);
+  const actualHex = pbkdf2Sha256Hex(password, salt);
+  return timingSafeEqualHex(actualHex, expectedHex);
 }
 
 export function hashSessionToken(token: string): string {
-  const secret = process.env.SESSION_SECRET || 'qsims-session-pepper';
-  return crypto.createHmac('sha256', secret).update(token).digest('hex');
+  return hmacSha256Hex(getSessionSecret(), token);
 }
 
 export function generateSessionToken(): string {
-  return crypto.randomBytes(32).toString('hex');
+  return randomHex(32);
 }
 
 export function isGlobalRole(role: RoleSlug): boolean {
@@ -62,8 +65,9 @@ export function isGlobalRole(role: RoleSlug): boolean {
 }
 
 export function createAuthMiddleware(db: DbInstance) {
-  return function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
-    const authHeader = req.headers.authorization;
+  return function requireAuth(req: AuthenticatedRequest, res: AppResponse, next: AppNextFunction): void {
+    const rawHeader = req.headers.authorization;
+    const authHeader = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(401).json({ error: 'Authentication required' });
       return;
@@ -125,7 +129,7 @@ export function createAuthMiddleware(db: DbInstance) {
 }
 
 export function requireRoles(db: DbInstance, ...allowedRoles: RoleSlug[]) {
-  return function roleGuard(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+  return function roleGuard(req: AuthenticatedRequest, res: AppResponse, next: AppNextFunction): void {
     const user = req.user;
     if (!user) {
       res.status(401).json({ error: 'Authentication required' });
@@ -152,7 +156,7 @@ export function resolveScopedBranchId(
   db: DbInstance,
   user: AuthUser,
   requestedBranchId: unknown,
-  req?: Request
+  req?: AppRequest
 ): number | null {
   if (isGlobalRole(user.role)) {
     if (
@@ -206,7 +210,7 @@ export function assertBranchWriteAccess(
   db: DbInstance,
   user: AuthUser,
   targetBranchId: number,
-  req?: Request
+  req?: AppRequest
 ): void {
   if (!Number.isInteger(targetBranchId) || targetBranchId <= 0) {
     throw new AppError(400, 'Valid branch ID is required');

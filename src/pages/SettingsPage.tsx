@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Save } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Database, Download, RotateCcw, Save, Upload } from 'lucide-react';
 import { apiRequest } from '../api/client';
 import { AlertBanner, StatusTag } from '../components/StatusTag';
+import {
+  exportBrowserDbBytes,
+  importBrowserDbBytes,
+  resetBrowserDb,
+} from '../localDb/browserDb';
 import type { Branch } from '../types';
 
-export function SettingsPage() {
+interface SettingsPageProps {
+  onDatabaseReplaced?: () => void;
+}
+
+export function SettingsPage({ onDatabaseReplaced }: SettingsPageProps) {
   const [settings, setSettings] = useState<Record<string, string>>({
     business_name: 'Quality Supermarkets Uganda Limited',
     system_name: 'QS-IMS',
@@ -17,6 +26,9 @@ export function SettingsPage() {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
   const [banner, setBanner] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [dbBusy, setDbBusy] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   async function loadAll() {
     const [sRes, bRes] = await Promise.all([
@@ -58,6 +70,81 @@ export function SettingsPage() {
       await loadAll();
     } catch (err) {
       setBanner({ type: 'error', text: err instanceof Error ? err.message : 'Branch update failed' });
+    }
+  }
+
+  async function handleExportBackup() {
+    setDbBusy(true);
+    setBanner(null);
+    try {
+      const bytes = await exportBrowserDbBytes();
+      const copy = new Uint8Array(bytes.byteLength);
+      copy.set(bytes);
+      const blob = new Blob([copy.buffer], { type: 'application/x-sqlite3' });
+      const url = URL.createObjectURL(blob);
+      const today = new Date().toISOString().slice(0, 10);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `qsims-backup-${today}.sqlite`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setBanner({
+        type: 'success',
+        text: `SQLite backup exported (${(bytes.byteLength / 1024).toFixed(1)} KB).`,
+      });
+    } catch (err) {
+      setBanner({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Failed to export database backup',
+      });
+    } finally {
+      setDbBusy(false);
+    }
+  }
+
+  async function handleImportBackup(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setDbBusy(true);
+    setBanner(null);
+    try {
+      const buffer = await file.arrayBuffer();
+      await importBrowserDbBytes(new Uint8Array(buffer));
+      setConfirmReset(false);
+      setBanner({
+        type: 'success',
+        text: `Database restored from "${file.name}".`,
+      });
+      await loadAll().catch(() => {});
+      onDatabaseReplaced?.();
+    } catch (err) {
+      setBanner({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Failed to restore backup file',
+      });
+    } finally {
+      setDbBusy(false);
+    }
+  }
+
+  async function handleConfirmReset() {
+    setDbBusy(true);
+    setBanner(null);
+    try {
+      await resetBrowserDb();
+      setConfirmReset(false);
+      onDatabaseReplaced?.();
+    } catch (err) {
+      setBanner({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Failed to reset browser database',
+      });
+    } finally {
+      setDbBusy(false);
     }
   }
 
@@ -334,6 +421,95 @@ export function SettingsPage() {
               </button>
             </div>
           </form>
+        )}
+      </div>
+
+      {/* Browser Database Backup & Recovery */}
+      <div className="bg-white border border-slate-200 rounded-md p-4 sm:p-6 space-y-4">
+        <div className="flex items-start gap-3 border-b border-slate-200 pb-3">
+          <div className="w-9 h-9 rounded bg-[#1A3A5C]/10 text-[#1A3A5C] flex items-center justify-center shrink-0">
+            <Database className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-[#1A3A5C]">
+              Browser Database Backup & Recovery
+            </h3>
+            <p className="text-xs text-slate-500">
+              Your SQLite database runs locally in this browser (IndexedDB). Export a portable{' '}
+              <span className="font-mono-num">.sqlite</span> snapshot for safekeeping or transfer to another device.
+            </p>
+          </div>
+        </div>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".sqlite,.db,application/x-sqlite3"
+          onChange={handleImportBackup}
+          className="hidden"
+        />
+
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+          <button
+            type="button"
+            disabled={dbBusy}
+            onClick={handleExportBackup}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] text-xs font-semibold text-white bg-[#1A3A5C] hover:bg-[#142d48] disabled:opacity-60 rounded"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download Backup (.sqlite)</span>
+          </button>
+
+          <button
+            type="button"
+            disabled={dbBusy}
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] text-xs font-semibold text-[#1A3A5C] bg-white border border-slate-300 hover:bg-slate-50 disabled:opacity-60 rounded"
+          >
+            <Upload className="w-4 h-4" />
+            <span>Restore Backup (.sqlite)</span>
+          </button>
+
+          {!confirmReset && (
+            <button
+              type="button"
+              disabled={dbBusy}
+              onClick={() => setConfirmReset(true)}
+              className="w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 disabled:opacity-60 rounded"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Reset Demo Data</span>
+            </button>
+          )}
+        </div>
+
+        {confirmReset && (
+          <div className="p-4 bg-rose-50 border border-rose-200 rounded flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="text-xs text-rose-900">
+              <div className="font-semibold">Confirm Browser Database Reset</div>
+              <div className="text-rose-700 mt-0.5">
+                This replaces all local records with the starter Kampala branch dataset and signs out active sessions.
+              </div>
+            </div>
+            <div className="flex flex-col-reverse sm:flex-row gap-2 shrink-0">
+              <button
+                type="button"
+                disabled={dbBusy}
+                onClick={() => setConfirmReset(false)}
+                className="px-4 py-2 min-h-[44px] text-xs font-medium bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={dbBusy}
+                onClick={handleConfirmReset}
+                className="px-4 py-2 min-h-[44px] text-xs font-semibold bg-rose-700 text-white rounded hover:bg-rose-800 disabled:opacity-60"
+              >
+                {dbBusy ? 'Resetting...' : 'Yes, Reset Data'}
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
